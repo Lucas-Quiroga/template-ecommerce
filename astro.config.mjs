@@ -8,7 +8,7 @@ import vercel from "@astrojs/vercel/serverless";
 export default defineConfig({
   site:
     process.env.NODE_ENV === "production"
-      ? "https://astrojs.vercel.app"
+      ? "https://template-ecommerce-rosy.vercel.app/"
       : "http://localhost:4321",
   integrations: [
     react(),
