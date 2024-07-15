@@ -1,0 +1,46 @@
+---
+import Layout from "../layouts/Layout.astro";
+import HomeProducts from "@/components/HomeProducts.astro";
+import { getPaginatedProducts } from "@/lib/getPaginatedProducts";
+import type { Product } from "@/types/types";
+
+// Obtener los parámetros de búsqueda y los productos paginados
+const { searchParams } = Astro.url;
+const { category, limit, page, products, productsCount } =
+  await getPaginatedProducts(searchParams);
+
+// Construir la URL canónica de manera segura
+let canonicalURL: string;
+if (Astro.site) {
+  canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+} else {
+  // Fallback a una URL relativa si Astro.site no está definido
+  canonicalURL = Astro.url.pathname;
+}
+
+// Metadata de la página
+const metadata = {
+  title: category
+    ? `${category} | Mi Tienda Online`
+    : "Inicio | Mi Tienda Online",
+  description: category
+    ? `Explora nuestra selección de productos ${category} en nuestra tienda online.`
+    : "Descubre nuestra amplia gama de productos de alta calidad en la página principal de nuestra tienda online.",
+  image: "/images/hero.jpg",
+  canonicalURL,
+  keywords: ["Tienda online", "Productos", "Compras", category].filter(Boolean),
+};
+
+// Parámetros para HomeProducts
+const homeProductsProps: {
+  page: number;
+  products: Product[] | null;
+  category: string;
+  limit: number;
+  productsCount: number;
+} = { page, products, category, limit, productsCount };
+---
+
+<Layout {...metadata}>
+  <HomeProducts {...homeProductsProps} />
+</Layout>

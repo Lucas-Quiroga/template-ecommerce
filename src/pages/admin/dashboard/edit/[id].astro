@@ -1,0 +1,28 @@
+---
+import { getProduct } from "@/services/getProduct";
+import { type Product } from "@/types/types";
+import AdminLayout from "@/layouts/Admin.layout.astro";
+import EditProduct from "@/components/admin/EditProduct";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/404");
+}
+
+const productExist: FirebaseFirestore.DocumentSnapshot<
+  FirebaseFirestore.DocumentData,
+  FirebaseFirestore.DocumentData
+> = await getProduct(id);
+if (!productExist.exists) {
+  return Astro.redirect("/404");
+}
+
+const product: Product = productExist.data() as Product;
+
+product.id = id;
+---
+
+<AdminLayout>
+  <EditProduct client:only product={product} />
+</AdminLayout>

@@ -1,0 +1,51 @@
+---
+import FiltersIndex from "./component/FiltersIndex";
+import CardProduct from "@/components/CardProduct.tsx";
+import SkeletonCard from "@/components/SkeletonCard.astro";
+import { PaginationComponent } from "@/components/Pagination";
+import CartButtonAside from "@/components/component/BtnCartAside";
+import type { Product } from "@/types/types";
+import ProductNotFound from "@/components/404ProductNotFound.astro";
+
+const { page, products, category, limit, productsCount } = Astro.props;
+---
+
+<main class="w-full h-full sm:flex-1 p-6 flex flex-col">
+  <div
+    class="flex flex-col gap-y-4 sm:flex-row justify-between items-center mb-6 space-x-4"
+  >
+    <div class="hidden lg:flex lg:flex-1">
+      <h1 class="text-2xl font-semibold">Productos</h1>
+    </div>
+
+    <div class="flex-1">
+      <PaginationComponent
+        totalPages={Math.ceil(productsCount / limit) || 1}
+        currentPage={page}
+        category={category}
+      />
+    </div>
+
+    <div class="flex-1 flex gap-2 justify-end">
+      <CartButtonAside client:visible />
+      <FiltersIndex client:visible category={category} />
+    </div>
+  </div>
+
+  <div class="flex-grow">
+    {products.length === 0 && <ProductNotFound />}
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
+    >
+      {
+        products !== null
+          ? products.map((product: Product) => (
+              <CardProduct client:load product={product} />
+            ))
+          : Array.from({ length: 8 }, (_, index) => (
+              <SkeletonCard key={index} />
+            ))
+      }
+    </div>
+  </div>
+</main>

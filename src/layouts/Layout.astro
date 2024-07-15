@@ -1,0 +1,38 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  canonicalURL?: string;
+  keywords?: string[];
+}
+
+import "../styles/globals.css";
+import SeoMeta from "@/components/SeoMeta.astro";
+import ViewTransitions from "astro/components/ViewTransitions.astro";
+import Aside from "@/components/Aside.astro";
+
+const { title, description, image, canonicalURL, keywords } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SeoMeta
+      title={title}
+      description={description}
+      image={image}
+      canonicalURL={canonicalURL}
+      keywords={keywords}
+    />
+    <ViewTransitions />
+  </head>
+  <body class="h-full">
+    <div class="flex flex-wrap min-h-screen bg-gray-100">
+      <Aside />
+      <main class="flex-1">
+        <slot />
+      </main>
+    </div>
+  </body>
+</html>

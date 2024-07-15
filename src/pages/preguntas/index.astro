@@ -1,0 +1,47 @@
+---
+import Faqs from "@/components/Faqs";
+import Layout from "@/layouts/Layout.astro";
+
+// Construir la URL canónica de manera segura
+let canonicalURL: string;
+if (Astro.site) {
+  canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+} else {
+  // Fallback a una URL relativa si Astro.site no está definido
+  canonicalURL = Astro.url.pathname;
+}
+
+// Metadata de la página
+const metadata = {
+  title: "Preguntas Frecuentes | Mi Tienda Online",
+  description:
+    "Encuentra respuestas a las preguntas más comunes sobre nuestros productos, envíos, devoluciones y más en nuestra sección de Preguntas Frecuentes.",
+  image: "/images/faq-hero.jpg", // Asegúrate de tener una imagen relevante para la página de FAQ
+  canonicalURL,
+  keywords: ["FAQ", "Preguntas Frecuentes", "Ayuda", "Soporte", "Información"],
+  schema: {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      // Aquí deberías incluir tus preguntas y respuestas más importantes
+      {
+        "@type": "Question",
+        name: "¿Cuál es el tiempo de entrega?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Nuestro tiempo de entrega estándar es de 3-5 días hábiles.",
+        },
+      },
+      // Añade más preguntas y respuestas según sea necesario
+    ],
+  },
+};
+---
+
+<Layout {...metadata}>
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(metadata.schema)}
+  />
+  <Faqs client:visible />
+</Layout>

@@ -1,0 +1,8 @@
+---
+import AdminLayout from "../../layouts/Admin.layout.astro";
+import RegisterAdmin from "../../components/admin/RegisterAdmin.tsx";
+---
+
+<AdminLayout>
+  <RegisterAdmin client:only="react" />
+</AdminLayout>

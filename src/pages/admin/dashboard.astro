@@ -1,0 +1,19 @@
+---
+import AdminLayout from "../../layouts/Admin.layout.astro";
+import MainDashboard from "@/components/MainDashboard.astro";
+import { getPaginatedProducts } from "@/lib/getPaginatedProducts";
+
+const { searchParams } = Astro.url;
+const { category, limit, page, products, productsCount } =
+  await getPaginatedProducts(searchParams, true);
+---
+
+<AdminLayout>
+  <MainDashboard
+    page={page}
+    products={products}
+    category={category}
+    limit={limit}
+    productsCount={productsCount}
+  />
+</AdminLayout>

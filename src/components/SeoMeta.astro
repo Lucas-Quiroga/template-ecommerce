@@ -1,0 +1,70 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  canonicalURL?: string | URL;
+  keywords?: string[];
+  noindex?: boolean;
+  nofollow?: boolean;
+}
+
+const {
+  title,
+  description,
+  image = "/default-og-image.jpg",
+  canonicalURL = Astro.url,
+  keywords = [],
+  noindex = false,
+  nofollow = false,
+} = Astro.props;
+
+const siteUrl = Astro.site ? Astro.site.href : "/";
+const canonicalURLString =
+  typeof canonicalURL === "string" ? canonicalURL : canonicalURL.href;
+const imageUrl = new URL(image, siteUrl).href;
+
+const robotsContent = [
+  noindex ? "noindex" : "index",
+  nofollow ? "nofollow" : "follow",
+].join(",");
+---
+
+<!-- SEO -->
+<title>{title}</title>
+<meta charset="UTF-8" />
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURLString} />
+{keywords.length > 0 && <meta name="keywords" content={keywords.join(", ")} />}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonicalURLString} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={imageUrl} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalURLString} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+
+<!-- Otras etiquetas meta útiles -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content={robotsContent} />
+<meta name="googlebot" content={robotsContent} />
+
+<!-- JSON-LD para Rich Snippets -->
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    url: canonicalURLString,
+    name: title,
+    description: description,
+    image: imageUrl,
+  })}
+/>

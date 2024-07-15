@@ -1,0 +1,172 @@
+---
+import {
+  Table,
+  TableBody,
+  TableHeader,
+  TableRow,
+  TableCell,
+  TableHead,
+} from "@/components/ui/table";
+import { Filter } from "@/components/admin/Filter";
+import { type Product } from "@/types/types";
+import AvailableBtn from "@/components/admin/AvailableBtn";
+import { PaginationComponent } from "./Pagination";
+import { formatter } from "@/lib/utils";
+
+const { page, products, category, limit, productsCount } = Astro.props;
+
+interface Table {
+  headers: string[];
+  data: Product[];
+}
+
+const table: Table = {
+  headers: [
+    "Imagen",
+    "Nombre",
+    "Precio",
+    "Categoria",
+    "Disponible",
+    "Acciones",
+  ],
+  data: products,
+};
+---
+
+<div class="flex h-screen w-full flex-col">
+  <main class="flex-1 bg-gray-50 dark:bg-gray-900 p-6">
+    <div class="container mx-auto">
+      <h1 class="text-2xl font-bold mb-6">Productos</h1>
+      <div class="flex justify-between m-4 w-full ml-auto">
+        <div class="flex-1">
+          <PaginationComponent
+            totalPages={Math.ceil(productsCount / limit) || 1}
+            currentPage={page}
+            category={category}
+          />
+        </div>
+        <Filter client:visible category={category} />
+      </div>
+      <div class="border shadow-sm rounded-lg">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              {
+                table.headers.map((header: string) => (
+                  <TableHead key={header}>{header}</TableHead>
+                ))
+              }
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {
+              table.data.map((product: Product) => (
+                <TableRow key={product.id}>
+                  <TableCell>
+                    <img
+                      src={product.image}
+                      width="48"
+                      height="48"
+                      alt={product.name}
+                      class="rounded-full object-cover overflow-hidden"
+                    />
+                  </TableCell>
+                  <TableCell className="font-medium">{product.name}</TableCell>
+
+                  <TableCell className="hidden md:table-cell">
+                    {formatter.format(product.price)}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {product.category}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <AvailableBtn client:load product={product} />
+                  </TableCell>
+
+                  <TableCell>
+                    <div class="flex items-center gap-2">
+                      <a
+                        href={`/admin/dashboard/edit/${product.id}`}
+                        class="border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:hover:bg-slate-800 dark:hover:text-slate-50 h-10 w-10 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-30"
+                      >
+                        <svg
+                          class="h-4 w-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M12 22h6a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v10" />
+                          <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                          <path d="M10.4 12.6a2 2 0 1 1 3 3L8 21l-4 1 1-4Z" />
+                        </svg>
+                        <span class="sr-only">Editar</span>
+                      </a>
+                      <button
+                        class="border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:hover:bg-slate-800 dark:hover:text-slate-50 h-10 w-10 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-30"
+                        data-id={product.id}
+                        id="delete-document"
+                      >
+                        <svg
+                          class="h-4 w-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M3 6h18" />
+                          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                          <line x1="10" x2="10" y1="11" y2="17" />
+                          <line x1="14" x2="14" y1="11" y2="17" />
+                        </svg>
+                        <span class="sr-only">Eliminar</span>
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            }
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  async function deleteProduct(id: string) {
+    if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+      const response: Response = await fetch(`/api/products/${id}`, {
+        method: "DELETE",
+      });
+      if (response.redirected) {
+        window.location.assign(response.url);
+      }
+    }
+  }
+
+  // Delegación de eventos
+  document.addEventListener("click", function (event) {
+    const target = event.target as HTMLElement;
+    const deleteButton = target.closest("button[data-id]") as HTMLButtonElement;
+
+    if (deleteButton) {
+      event.preventDefault();
+      const id: string | null = deleteButton.getAttribute("data-id");
+      if (id) {
+        deleteProduct(id);
+      }
+    }
+  });
+</script>

@@ -1,0 +1,24 @@
+---
+const title = "Admin";
+import "@/styles/globals.css";
+import NavbarAdmin from "@/components/admin/NavbarAdmin.astro";
+import { getAuthSession } from "@/services/getAuthSession";
+import ViewTransitions from "astro/components/ViewTransitions.astro";
+import type { DecodedIdToken } from "firebase-admin/auth";
+
+const session: DecodedIdToken | null = await getAuthSession(Astro.cookies);
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <ViewTransitions />
+  </head>
+  <body>
+    {session && <NavbarAdmin />}
+    <slot />
+  </body>
+</html>
