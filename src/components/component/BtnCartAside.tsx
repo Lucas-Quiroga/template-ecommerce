@@ -76,9 +76,11 @@ const CartButtonAside = (): JSX.Element => {
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline">
-          <FaCartShopping />
+          <FaCartShopping className="dark:text-white" />
           {totalQuantity > 0 && (
-            <span className="text-black ml-2">{totalQuantity}</span>
+            <span className="text-black ml-2 dark:text-white">
+              {totalQuantity}
+            </span>
           )}
         </Button>
       </SheetTrigger>
@@ -97,32 +99,39 @@ const CartButtonAside = (): JSX.Element => {
           {Object.values($cartItems as Cart).map((item: CartItem) =>
             item.quantity === 0 ? null : (
               <li key={item.id} className="flex gap-3">
-                <div className="hidden sm:flex">
+                {/* <div className="hidden sm:flex">
                   <img
                     src={item.image}
                     alt={item.name}
                     className="w-[100px] h-[80px] object-cover rounded-md"
                   />
-                </div>
+                </div> */}
                 <div className="flex flex-col justify-between w-full">
-                  <div className="flex justify-between items-center">
-                    <p className="text-gray-400">Nombre</p>
-                    <p>{item.name}</p>
+                  <div className="flex justify-between items-center ">
+                    <p className="text-gray-400 text-sm sm:text-base">Nombre</p>
+                    <p className="text-sm dark:text-white">{item.name}</p>
                   </div>
                   <div className="flex justify-between items-center">
-                    <p className="text-gray-400">Cantidad</p>
-                    <p>
-                      <span className="text-sm text-gray-500">x</span>{" "}
+                    <p className="text-gray-400 text-sm sm:text-base">
+                      Cantidad
+                    </p>
+                    <p className="dark:text-white">
+                      <span className="text-sm text-gray-500 dark:text-white">
+                        x
+                      </span>{" "}
                       {item.quantity}
                     </p>
                   </div>
                   <div className="flex justify-between items-center">
-                    <p className="text-gray-400">Precio</p>
-                    <p>{formatter.format(item.quantity * item.price)}</p>
+                    <p className="text-gray-400 text-sm sm:text-base">Precio</p>
+                    <p className="dark:text-white">
+                      {formatter.format(item.quantity * item.price)}
+                    </p>
                   </div>
                 </div>
                 <Button
                   variant="destructive"
+                  size={"sm"}
                   onClick={() => removeCartItem(item.id)}
                 >
                   <RiDeleteBin6Line size={20} />
@@ -145,12 +154,17 @@ const CartButtonAside = (): JSX.Element => {
                     {formatter.format(getTotalPrice())}
                   </p>
                 </div>
-                <Button onClick={sendMessageWhatsApp}>Finalizar compra</Button>
+                <Button
+                  onClick={sendMessageWhatsApp}
+                  className="dark:hover:bg-gray-700 dark:hover:text-white"
+                >
+                  Finalizar compra
+                </Button>
               </div>
             )}
           </div>
           <SheetClose className="mt-2">
-            <Button variant="outline" className=" m-0">
+            <Button variant="outline" className="m-0 dark:text-white">
               Cerrar
             </Button>
           </SheetClose>

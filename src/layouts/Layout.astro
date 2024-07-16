@@ -15,7 +15,7 @@ import Aside from "@/components/Aside.astro";
 const { title, description, image, canonicalURL, keywords } = Astro.props;
 ---
 
-<!doctype html>
+<script is:inline src="/scripts/updateTheme.script.ts"></script>
 <html lang="en">
   <head>
     <SeoMeta
@@ -28,7 +28,7 @@ const { title, description, image, canonicalURL, keywords } = Astro.props;
     <ViewTransitions />
   </head>
   <body class="h-full">
-    <div class="flex flex-wrap min-h-screen bg-gray-100">
+    <div class="flex flex-wrap min-h-screen bg-gray-100 dark:bg-gray-950">
       <Aside />
       <main class="flex-1">
         <slot />

@@ -7,6 +7,7 @@ module.exports = {
     "./app/**/*.{astro,ts,tsx}",
     "./src/**/*.{astro,ts,tsx}",
   ],
+  darkMode: "class",
   prefix: "",
   theme: {
     container: {

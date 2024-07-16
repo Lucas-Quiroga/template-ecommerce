@@ -6,6 +6,7 @@ import { PaginationComponent } from "@/components/Pagination";
 import CartButtonAside from "@/components/component/BtnCartAside";
 import type { Product } from "@/types/types";
 import ProductNotFound from "@/components/404ProductNotFound.astro";
+import { ModeToggle } from "@/components/ThemeBtn";
 
 const { page, products, category, limit, productsCount } = Astro.props;
 ---
@@ -15,7 +16,7 @@ const { page, products, category, limit, productsCount } = Astro.props;
     class="flex flex-col gap-y-4 sm:flex-row justify-between items-center mb-6 space-x-4"
   >
     <div class="hidden lg:flex lg:flex-1">
-      <h1 class="text-2xl font-semibold">Productos</h1>
+      <h1 class="text-2xl font-semibold dark:text-white">Productos</h1>
     </div>
 
     <div class="flex-1">
@@ -27,6 +28,7 @@ const { page, products, category, limit, productsCount } = Astro.props;
     </div>
 
     <div class="flex-1 flex gap-2 justify-end">
+      <ModeToggle client:load />
       <CartButtonAside client:visible />
       <FiltersIndex client:visible category={category} />
     </div>

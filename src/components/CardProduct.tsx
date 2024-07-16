@@ -72,12 +72,18 @@ const CardProduct: React.FC<CardProductProps> = ({ product }) => {
           </span>
         </div>
         <h5 className="text-md font-medium mb-2">{product.name}</h5>
-        <p className="text-sm text-gray-500">{product.description}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-300">
+          {product.description}
+        </p>
       </CardContent>
       <CardFooter className="p-2 flex-shrink-0">
         {" "}
         {quantity === 0 && (
-          <Button variant="outline" onClick={addProduct} className="w-full">
+          <Button
+            variant="outline"
+            onClick={addProduct}
+            className="w-full dark:bg-gray-100 dark:text-black dark:hover:bg-gray-700 dark:hover:text-white"
+          >
             Agregar
           </Button>
         )}
@@ -86,7 +92,7 @@ const CardProduct: React.FC<CardProductProps> = ({ product }) => {
             <Button
               variant="outline"
               onClick={decreaseQuantity}
-              className="w-[30%]"
+              className="w-[30%] dark:bg-gray-100 dark:text-black dark:hover:bg-gray-700 dark:hover:text-white"
             >
               -
             </Button>
@@ -94,7 +100,7 @@ const CardProduct: React.FC<CardProductProps> = ({ product }) => {
             <Button
               variant="outline"
               onClick={increaseQuantity}
-              className="w-[30%]"
+              className="w-[30%] dark:bg-gray-100 dark:text-black dark:hover:bg-gray-700 dark:hover:text-white"
             >
               +
             </Button>

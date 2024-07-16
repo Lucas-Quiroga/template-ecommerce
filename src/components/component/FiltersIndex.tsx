@@ -31,7 +31,7 @@ const FiltersIndex = ({ category }: FiltersIndexProps): JSX.Element => {
     <div className="flex gap-2">
       <div className="flex space-x-2">
         <Select onValueChange={handleCategoryChange} value={category}>
-          <SelectTrigger className="min-w-[150px] whitespace-nowrap">
+          <SelectTrigger className="min-w-[150px] whitespace-nowrap dark:text-white">
             <SelectValue placeholder="Categorias" />
           </SelectTrigger>
           <SelectContent>
@@ -48,7 +48,7 @@ const FiltersIndex = ({ category }: FiltersIndexProps): JSX.Element => {
         onClick={handleCleanFilters}
         disabled={category === ""}
       >
-        <IoReload />
+        <IoReload className="dark:text-white" />
       </Button>
     </div>
   );

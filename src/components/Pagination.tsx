@@ -44,6 +44,7 @@ export function PaginationComponent({
             href={`?page=${i}&category=${category}`}
             isActive={currentPage === i}
             onClick={(e) => handlePageClick(i, e)}
+            className="dark:text-white"
           >
             {i}
           </PaginationLink>
