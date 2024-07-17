@@ -2,6 +2,14 @@
 
 Esta plantilla de e-commerce está construida con Astro, aprovechando tecnologías como React para los componentes y Tailwind CSS para el estilo. Es perfecta para comenzar a construir tu tienda en línea con facilidad y rapidez.
 
+## Imagen previa 👁
+
+![app](https://res.cloudinary.com/dncmrwppr/image/upload/v1721185820/131shots_so_cmzoqs.png)
+
+## Despliegue 📦
+
+- [DEMO](https://template-ecommerce-rosy.vercel.app/) - Website
+
 ## 🚀 Cómo empezar
 
 Para comenzar a utilizar esta plantilla, sigue estos pasos:
@@ -127,3 +135,11 @@ y en DATA_TIENDA completar los campos de faqs (preguntas frecuentes) y title (no
 ```
 
 ¡Listo! Ahora tienes todo lo necesario para comenzar a trabajar con tu plantilla de e-commerce usando Astro.
+
+## Autor ✒️
+
+- **Lucas Quiroga** - _Trabajo inicial_ - [Lucas Quiroga](https://github.com/Lucas-Quiroga)
+
+## Licencia 📄
+
+Este proyecto tiene licencia © LUCAS QUIROGA 2024, casi todos los derechos reservados.
