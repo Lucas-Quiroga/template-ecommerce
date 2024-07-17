@@ -66,10 +66,11 @@ La estructura de carpetas de este proyecto es la siguiente:
 
 Para que la plantilla funcione correctamente, sigue estos pasos:
 
-1. Crear archivo .env
+1. **Crear archivo .env**
 
 Completa la siguiente información extraída del servidor de Firebase:
 
+```text
 FIREBASE_PRIVATE_KEY_ID=
 FIREBASE_PRIVATE_KEY=
 FIREBASE_PROJECT_ID=
@@ -79,11 +80,13 @@ FIREBASE_AUTH_URI=
 FIREBASE_TOKEN_URI=
 FIREBASE_AUTH_CERT_URL=
 FIREBASE_CLIENT_CERT_URL=
+```
 
-2. Crear archivo .env.development
+2. **Crear archivo .env.development**
 
 Completa la siguiente información extraída del cliente de Firebase:
 
+```text
 PUBLIC_API_KEY=
 PUBLIC_AUTH_DOMAIN=
 PUBLIC_PROJECT_ID=
@@ -91,27 +94,36 @@ PUBLIC_STORAGE_BUCKET=
 PUBLIC_MESSAGING_SENDER_ID=
 PUBLIC_APP_ID=
 PUBLIC_MEASUREMENT_ID=
+```
 
 Para registrar a tu administrador, agrega una clave secreta en el mismo archivo .env.development:
 
+```text
 PUBLIC_SECRET_KEY=
+```
 
-3. Configurar categorías y almacenamiento local
+3. **Configurar categorías y almacenamiento local**
 
 En la carpeta src/constants, configura las categorías que tendrán tus productos:
 
+```text
 export const CATEGORY_SELECT = [
 // Tus categorías aquí
 ];
+```
 
 Define el nombre para guardar el carrito en el almacenamiento local:
 
+```text
 export const LOCAL_STORAGE_KEY = 'nombre_del_carrito';
+```
 
-4. Configurar número de teléfono y datos de la tienda
+4. **Configurar número de teléfono y datos de la tienda**
 
+```text
 export const PHONE_NUMBER=tu_numero_de_celular
 
 y en DATA_TIENDA completar los campos de faqs (preguntas frecuentes) y title (nombre de la tienda)
+```
 
 ¡Listo! Ahora tienes todo lo necesario para comenzar a trabajar con tu plantilla de e-commerce usando Astro.
