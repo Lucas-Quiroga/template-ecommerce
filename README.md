@@ -1,54 +1,117 @@
-# Astro Starter Kit: Basics
+# Plantilla E-commerce con Astro
+
+Esta plantilla de e-commerce está construida con Astro, aprovechando tecnologías como React para los componentes y Tailwind CSS para el estilo. Es perfecta para comenzar a construir tu tienda en línea con facilidad y rapidez.
+
+## 🚀 Cómo empezar
+
+Para comenzar a utilizar esta plantilla, sigue estos pasos:
+
+1. **Instala las dependencias**
+
+   Asegúrate de tener Node.js instalado en tu sistema. Luego, ejecuta el siguiente comando en tu terminal para instalar las dependencias necesarias:
 
 ```sh
-npm create astro@latest -- --template basics
+ npm install
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+2. **Desarrollo local**
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+   Para iniciar el servidor de desarrollo y trabajar en tu proyecto localmente, ejecuta:
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+```sh
+ npm run dev
+```
 
-## 🚀 Project Structure
+Esto iniciará el servidor de desarrollo en localhost:4321. Puedes acceder a tu sitio en el navegador a través de esta dirección.
 
-Inside of your Astro project, you'll see the following folders and files:
+3. **Construye tu sitio**
+
+   Cuando estés listo para construir tu sitio para producción, ejecuta:
+
+```sh
+ npm run build
+```
+
+Esto generará tu sitio en la carpeta ./dist/, listo para ser desplegado.
+
+## 📁 Estructura del proyecto
+
+La estructura de carpetas de este proyecto es la siguiente:
 
 ```text
 /
-├── public/
-│   └── favicon.svg
+├── .astro/                # Configuraciones de Astro
+├── public/                # Archivos estáticos (imágenes, etc.)
 ├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+│   ├── components/        # Componentes de Astro y React
+│   ├── constants/         # Constantes del proyecto
+│   ├── firebase/          # Configuración y utilidades de Firebase
+│   ├── layouts/           # Layouts de Astro
+│   ├── pages/             # Páginas de Astro
+│   ├── styles/            # Archivos de estilo Tailwind CSS
+│   ├── types/             # Tipos TypeScript
+│   ├── lib/               # Bibliotecas y utilidades compartidas
+│   ├── schema/            # Esquemas de validación (por ejemplo, Joi, Yup)
+│   ├── scripts/           # Scripts para tareas de desarrollo y construcción
+│   ├── services/          # Servicios para manejar lógica de negocio y API
+│   ├── middleware/        # Middleware para manejar lógica entre capas
+│   └── cartStore/         # Estado y lógica del carrito de compras
+├── .env, .env.development # Archivos de variables de entorno
+├── astro.config.mjs       # Configuración de Astro
+├── package.json           # Dependencias y scripts del proyecto
+└── tsconfig.json          # Configuración de TypeScript
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🛠️ Configuración
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Para que la plantilla funcione correctamente, sigue estos pasos:
 
-Any static assets, like images, can be placed in the `public/` directory.
+1. Crear archivo .env
 
-## 🧞 Commands
+Completa la siguiente información extraída del servidor de Firebase:
 
-All commands are run from the root of the project, from a terminal:
+FIREBASE_PRIVATE_KEY_ID=
+FIREBASE_PRIVATE_KEY=
+FIREBASE_PROJECT_ID=
+FIREBASE_CLIENT_EMAIL=
+FIREBASE_CLIENT_ID=
+FIREBASE_AUTH_URI=
+FIREBASE_TOKEN_URI=
+FIREBASE_AUTH_CERT_URL=
+FIREBASE_CLIENT_CERT_URL=
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+2. Crear archivo .env.development
 
-## 👀 Want to learn more?
+Completa la siguiente información extraída del cliente de Firebase:
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+PUBLIC_API_KEY=
+PUBLIC_AUTH_DOMAIN=
+PUBLIC_PROJECT_ID=
+PUBLIC_STORAGE_BUCKET=
+PUBLIC_MESSAGING_SENDER_ID=
+PUBLIC_APP_ID=
+PUBLIC_MEASUREMENT_ID=
+
+Para registrar a tu administrador, agrega una clave secreta en el mismo archivo .env.development:
+
+PUBLIC_SECRET_KEY=
+
+3. Configurar categorías y almacenamiento local
+
+En la carpeta src/constants, configura las categorías que tendrán tus productos:
+
+export const CATEGORY_SELECT = [
+// Tus categorías aquí
+];
+
+Define el nombre para guardar el carrito en el almacenamiento local:
+
+export const LOCAL_STORAGE_KEY = 'nombre_del_carrito';
+
+4. Configurar número de teléfono y datos de la tienda
+
+export const PHONE_NUMBER=tu_numero_de_celular
+
+y en DATA_TIENDA completar los campos de faqs (preguntas frecuentes) y title (nombre de la tienda)
+
+¡Listo! Ahora tienes todo lo necesario para comenzar a trabajar con tu plantilla de e-commerce usando Astro.
