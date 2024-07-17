@@ -1,6 +1,8 @@
 # Plantilla E-commerce con Astro
 
-Esta plantilla de e-commerce está construida con Astro, aprovechando tecnologías como React para los componentes y Tailwind CSS para el estilo. Es perfecta para comenzar a construir tu tienda en línea con facilidad y rapidez.
+Esta plantilla de e-commerce está construida con Astro, aprovechando tecnologías como React para los componentes y Tailwind CSS junto con SHADCN para componentes estilizados. Es perfecta para comenzar a construir tu tienda en línea con facilidad y rapidez.
+
+Es importante recordar que esta plantilla utiliza Firebase para la base de datos. Debes configurarla según tus preferencias. Te proporcionamos una base preconfigurada que puedes editar según tus productos.
 
 ## Imagen previa 👁
 
@@ -14,60 +16,24 @@ Esta plantilla de e-commerce está construida con Astro, aprovechando tecnologí
 
 Para comenzar a utilizar esta plantilla, sigue estos pasos:
 
-1. **Instala las dependencias**
+1. **Clonar el repositorio**
+
+```sh
+git clone https://github.com/Lucas-Quiroga/template-ecommerce.git
+```
+
+2. **Ingresar al proyecto**
+
+```text
+cd template-ecommerce
+```
+
+3. **Instalar las dependencias**
 
    Asegúrate de tener Node.js instalado en tu sistema. Luego, ejecuta el siguiente comando en tu terminal para instalar las dependencias necesarias:
 
 ```sh
  npm install
-```
-
-2. **Desarrollo local**
-
-   Para iniciar el servidor de desarrollo y trabajar en tu proyecto localmente, ejecuta:
-
-```sh
- npm run dev
-```
-
-Esto iniciará el servidor de desarrollo en localhost:4321. Puedes acceder a tu sitio en el navegador a través de esta dirección.
-
-3. **Construye tu sitio**
-
-   Cuando estés listo para construir tu sitio para producción, ejecuta:
-
-```sh
- npm run build
-```
-
-Esto generará tu sitio en la carpeta ./dist/, listo para ser desplegado.
-
-## 📁 Estructura del proyecto
-
-La estructura de carpetas de este proyecto es la siguiente:
-
-```text
-/
-├── .astro/                # Configuraciones de Astro
-├── public/                # Archivos estáticos (imágenes, etc.)
-├── src/
-│   ├── components/        # Componentes de Astro y React
-│   ├── constants/         # Constantes del proyecto
-│   ├── firebase/          # Configuración y utilidades de Firebase
-│   ├── layouts/           # Layouts de Astro
-│   ├── pages/             # Páginas de Astro
-│   ├── styles/            # Archivos de estilo Tailwind CSS
-│   ├── types/             # Tipos TypeScript
-│   ├── lib/               # Bibliotecas y utilidades compartidas
-│   ├── schema/            # Esquemas de validación (por ejemplo, Joi, Yup)
-│   ├── scripts/           # Scripts para tareas de desarrollo y construcción
-│   ├── services/          # Servicios para manejar lógica de negocio y API
-│   ├── middleware/        # Middleware para manejar lógica entre capas
-│   └── cartStore/         # Estado y lógica del carrito de compras
-├── .env, .env.development # Archivos de variables de entorno
-├── astro.config.mjs       # Configuración de Astro
-├── package.json           # Dependencias y scripts del proyecto
-└── tsconfig.json          # Configuración de TypeScript
 ```
 
 ## 🛠️ Configuración
@@ -133,6 +99,54 @@ export const PHONE_NUMBER=tu_numero_de_celular
 
 y en DATA_TIENDA completar los campos de faqs (preguntas frecuentes) y title (nombre de la tienda)
 ```
+
+## 🚀 Inicializar el proyecto en modo desarrollo
+
+Para iniciar el servidor de desarrollo y trabajar en tu proyecto localmente, ejecuta:
+
+```sh
+ npm run dev
+```
+
+Esto iniciará el servidor de desarrollo en localhost:4321. Puedes acceder a tu sitio en el navegador a través de esta dirección.
+
+## 📁 Estructura del proyecto
+
+La estructura de carpetas de este proyecto es la siguiente:
+
+```text
+/
+├── .astro/                # Configuraciones de Astro
+├── public/                # Archivos estáticos (imágenes, etc.)
+├── src/
+│   ├── components/        # Componentes de Astro y React
+│   ├── constants/         # Constantes del proyecto
+│   ├── firebase/          # Configuración y utilidades de Firebase
+│   ├── layouts/           # Layouts de Astro
+│   ├── pages/             # Páginas de Astro
+│   ├── styles/            # Archivos de estilo Tailwind CSS
+│   ├── types/             # Tipos TypeScript
+│   ├── lib/               # Bibliotecas y utilidades compartidas
+│   ├── schema/            # Esquemas de validación (por ejemplo, Joi, Yup)
+│   ├── scripts/           # Scripts para tareas de desarrollo y construcción
+│   ├── services/          # Servicios para manejar lógica de negocio y API
+│   ├── middleware/        # Middleware para manejar lógica entre capas
+│   └── cartStore/         # Estado y lógica del carrito de compras
+├── .env, .env.development # Archivos de variables de entorno
+├── astro.config.mjs       # Configuración de Astro
+├── package.json           # Dependencias y scripts del proyecto
+└── tsconfig.json          # Configuración de TypeScript
+```
+
+## 🛒 Producción
+
+Cuando estés listo para construir tu sitio para producción, ejecuta:
+
+```sh
+ npm run build
+```
+
+Esto generará tu sitio en la carpeta ./dist/, listo para ser desplegado.
 
 ¡Listo! Ahora tienes todo lo necesario para comenzar a trabajar con tu plantilla de e-commerce usando Astro.
 
