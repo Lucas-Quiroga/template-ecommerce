@@ -40,9 +40,39 @@ cd template-ecommerce
 
 Para que la plantilla funcione correctamente, sigue estos pasos:
 
-1. **Crear archivo .env**
+1. **Inicializar un proyecto web en firebase**
 
-Completa la siguiente información extraída del servidor de Firebase:
+```text
+https://firebase.google.com
+```
+
+2. **En el IDE crear un archivo .env.development**
+
+Completa la siguiente información extraída del SDK del cliente de Firebase. Estas credenciales serán utilizadas por el lado del cliente de tu aplicación. Tambien podes encontrarlas en la consola de Firebase en Project settings > General. Desplázate hacia abajo hasta la sección Your apps y haz clic en el icono de Web app.
+
+```text
+PUBLIC_API_KEY=
+PUBLIC_AUTH_DOMAIN=
+PUBLIC_PROJECT_ID=
+PUBLIC_STORAGE_BUCKET=
+PUBLIC_MESSAGING_SENDER_ID=
+PUBLIC_APP_ID=
+PUBLIC_MEASUREMENT_ID=
+```
+
+Tambien para registrar a tu administrador, agrega una clave secreta en el mismo archivo .env.development:
+
+```text
+PUBLIC_SECRET_KEY="tu_clave_secreta"
+```
+
+3. **Inicializar firestore database**
+
+En la consola de firebase, inicializar una base de datos en "firestore database".
+
+4. **En el IDE crear un archivo .env**
+
+Completa la siguiente información extraída de las credenciales del proyecto: Estas credenciales serán utilizadas por el lado del servidor de tu aplicación. Puedes generarlas en la consola de Firebase en Project settings > Service accounts > Firebase Admin SDK > Generate new private key.
 
 ```text
 FIREBASE_PRIVATE_KEY_ID=
@@ -56,27 +86,7 @@ FIREBASE_AUTH_CERT_URL=
 FIREBASE_CLIENT_CERT_URL=
 ```
 
-2. **Crear archivo .env.development**
-
-Completa la siguiente información extraída del cliente de Firebase:
-
-```text
-PUBLIC_API_KEY=
-PUBLIC_AUTH_DOMAIN=
-PUBLIC_PROJECT_ID=
-PUBLIC_STORAGE_BUCKET=
-PUBLIC_MESSAGING_SENDER_ID=
-PUBLIC_APP_ID=
-PUBLIC_MEASUREMENT_ID=
-```
-
-Para registrar a tu administrador, agrega una clave secreta en el mismo archivo .env.development:
-
-```text
-PUBLIC_SECRET_KEY=
-```
-
-3. **Configurar categorías y almacenamiento local**
+5. **Configurar categorías y almacenamiento local**
 
 En la carpeta src/constants, configura las categorías que tendrán tus productos:
 
@@ -92,13 +102,50 @@ Define el nombre para guardar el carrito en el almacenamiento local:
 export const LOCAL_STORAGE_KEY = 'nombre_del_carrito';
 ```
 
-4. **Configurar número de teléfono y datos de la tienda**
+5. **Configurar número de teléfono y datos de la tienda**
 
 ```text
 export const PHONE_NUMBER=tu_numero_de_celular
 
 y en DATA_TIENDA completar los campos de faqs (preguntas frecuentes) y title (nombre de la tienda)
 ```
+
+6. **Crear administrador**
+
+En la consola de firebase, inicializar la authenticación en "Authentication". Una vez adentro, en la sección de "Proveedores de acceso" agregar un proveedor nativo, en éste caso usamos correo electronico/contraseña, y habilitamos y guardamos.
+
+Ahora en el navegador En la siguiente URL encontraras dos botones, uno para poder registrar al administrador y otro para poder logear al mismo.
+
+```text
+http://localhost:4321/admin
+```
+
+7. **Carga de productos**
+
+Para la creacion de los productos necesitaremos en la consola de firebase inicializar el "Storage" para almacenar y recuperar archivos generados por el usuario.
+
+Si iniciaste el proyecto en modo produccion, para que no te lance error al subir las imagenes, tenes que ingresar dentro de storage en la consola de firebase, ir a reglas y seguramente lo tengas asi:
+
+```text
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=} {
+      allow read, write: if false;
+    }
+  }
+}
+```
+y lo tenes que cambiar al siguiente:
+
+```text
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=} {
+      allow read, write: if request.auth != null;
+    }
+  }
+```
+Esto permitira que cualquier usuario registrado, en éste caso sería el administrador ya que es el unico que posee el ingreso gracias a la clave secreta, pueda hacer cambios y agregar imagenes en el storage. Esto se puede modificar en base a las preferencias. El cambio tardara un poco segun la administracion de firebase.
 
 ## 🚀 Inicializar el proyecto en modo desarrollo
 
