@@ -141,12 +141,18 @@ para registrar y loguear al administrador.
 Inicializa el "Storage" en Firebase para manejar archivos. Configura las reglas de seguridad:
 
 ```text
+rules_version = '2';
+
+// Craft rules based on data in your Firestore database
+// allow write: if firestore.get(
+//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
-    match /{allPaths=} {
-      allow read, write: if request.auth != null;
-    }
-  }
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
 ```
 Esto permitirá que el administrador registrado pueda gestionar los archivos en el storage.
 
