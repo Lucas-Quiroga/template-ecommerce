@@ -1,8 +1,8 @@
 # Plantilla E-commerce con Astro
 
-Esta plantilla de e-commerce está construida con Astro, aprovechando tecnologías como React para los componentes y Tailwind CSS junto con SHADCN para componentes estilizados. Es perfecta para comenzar a construir tu tienda en línea con facilidad y rapidez.
+Esta plantilla de e-commerce está construida con Astro, utilizando React para los componentes y Tailwind CSS junto con SHADCN para el estilo. Es ideal para empezar a construir tu tienda en línea de manera rápida y sencilla.
 
-Es importante recordar que esta plantilla utiliza Firebase para la base de datos. Debes configurarla según tus preferencias. Te proporcionamos una base preconfigurada que puedes editar según tus productos.
+Utiliza Firebase para la base de datos, por lo que es necesario configurarla según tus necesidades. Te proporcionamos una base preconfigurada que puedes ajustar según tus productos.
 
 ## Imagen previa 👁
 
@@ -40,9 +40,49 @@ cd template-ecommerce
 
 Para que la plantilla funcione correctamente, sigue estos pasos:
 
-1. **Crear archivo .env**
+1. **Inicializar un proyecto web en firebase**
 
-Completa la siguiente información extraída del servidor de Firebase:
+Visita [Firebase](https://firebase.google.com) para crear tu proyecto.
+
+2. **Crear archivo .env.development en el IDE**
+
+Completa la siguiente información extraída del SDK del cliente de Firebase. Estas credenciales serán utilizadas por el lado del cliente de tu aplicación. Tambien podes encontrarlas en la consola de Firebase en Project settings > General. Desplázate hacia abajo hasta la sección Your apps y haz clic en el icono de Web app.
+
+```text
+PUBLIC_API_KEY=
+PUBLIC_AUTH_DOMAIN=
+PUBLIC_PROJECT_ID=
+PUBLIC_STORAGE_BUCKET=
+PUBLIC_MESSAGING_SENDER_ID=
+PUBLIC_APP_ID=
+PUBLIC_MEASUREMENT_ID=
+```
+
+Agrega una clave secreta para el administrador en el mismo archivo .env.development:
+
+```text
+PUBLIC_SECRET_KEY="tu_clave_secreta"
+```
+
+3. **Inicializar firestore database**
+
+En la consola de Firebase, inicializa una base de datos en Firestore. Configura las reglas de seguridad:
+
+```text
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+```
+
+4. **Crear archivo .env en el IDE**
+
+Completa la siguiente información extraída de las credenciales del proyecto: Estas credenciales serán utilizadas por el lado del servidor de tu aplicación. Puedes generarlas en la consola de Firebase en Project settings > Service accounts > Firebase Admin SDK > Generate new private key.
 
 ```text
 FIREBASE_PRIVATE_KEY_ID=
@@ -56,29 +96,9 @@ FIREBASE_AUTH_CERT_URL=
 FIREBASE_CLIENT_CERT_URL=
 ```
 
-2. **Crear archivo .env.development**
+5. **Configurar categorías y almacenamiento local**
 
-Completa la siguiente información extraída del cliente de Firebase:
-
-```text
-PUBLIC_API_KEY=
-PUBLIC_AUTH_DOMAIN=
-PUBLIC_PROJECT_ID=
-PUBLIC_STORAGE_BUCKET=
-PUBLIC_MESSAGING_SENDER_ID=
-PUBLIC_APP_ID=
-PUBLIC_MEASUREMENT_ID=
-```
-
-Para registrar a tu administrador, agrega una clave secreta en el mismo archivo .env.development:
-
-```text
-PUBLIC_SECRET_KEY=
-```
-
-3. **Configurar categorías y almacenamiento local**
-
-En la carpeta src/constants, configura las categorías que tendrán tus productos:
+En src/constants, configura las categorías de tus productos:
 
 ```text
 export const CATEGORY_SELECT = [
@@ -86,23 +106,53 @@ export const CATEGORY_SELECT = [
 ];
 ```
 
-Define el nombre para guardar el carrito en el almacenamiento local:
+Define el nombre para el carrito en almacenamiento local:
 
 ```text
 export const LOCAL_STORAGE_KEY = 'nombre_del_carrito';
 ```
 
-4. **Configurar número de teléfono y datos de la tienda**
+5. **Configurar datos de la tienda**
 
 ```text
-export const PHONE_NUMBER=tu_numero_de_celular
+export const PHONE_NUMBER = 'tu_numero_de_celular';
 
-y en DATA_TIENDA completar los campos de faqs (preguntas frecuentes) y title (nombre de la tienda)
+export const DATA_TIENDA = {
+ header: {
+     title: 'nombre_de_la_tienda',
+  },
+  faqs: [
+    // Preguntas frecuentes aquí
+  ],
+};
 ```
+
+6. **Crear administrador**
+
+En la consola de Firebase, inicializa la autenticación en "Authentication". Agrega un proveedor de correo electrónico y contraseña. Luego, visita:
+
+```text
+http://localhost:4321/admin
+```
+para registrar y loguear al administrador.
+
+7. **Carga de productos**
+
+Inicializa el "Storage" en Firebase para manejar archivos. Configura las reglas de seguridad:
+
+```text
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=} {
+      allow read, write: if request.auth != null;
+    }
+  }
+```
+Esto permitirá que el administrador registrado pueda gestionar los archivos en el storage.
 
 ## 🚀 Inicializar el proyecto en modo desarrollo
 
-Para iniciar el servidor de desarrollo y trabajar en tu proyecto localmente, ejecuta:
+Para iniciar el servidor de desarrollo:
 
 ```sh
  npm run dev
@@ -140,7 +190,7 @@ La estructura de carpetas de este proyecto es la siguiente:
 
 ## 🛒 Producción
 
-Cuando estés listo para construir tu sitio para producción, ejecuta:
+Para construir tu sitio para producción:
 
 ```sh
  npm run build
