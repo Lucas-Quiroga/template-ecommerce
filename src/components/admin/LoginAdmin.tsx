@@ -20,16 +20,23 @@ import type { SubmitHandler } from "react-hook-form";
 import {
   getAuth,
   inMemoryPersistence,
+  setPersistence,
+  browserSessionPersistence,
   type Auth,
   type User,
 } from "firebase/auth";
 import app from "@/firebase/client";
+import { Spinner } from "../ui/spinner";
+import { useFetch } from "@/hooks/useFetch";
+
+interface SignInResponse {
+  url: string;
+}
 
 const LoginAdmin = (): JSX.Element => {
-  const [error, setError] = React.useState<string | null>(null);
-  const [success, setSuccess] = React.useState<string | null>(null);
-
   const auth: Auth = getAuth(app);
+  const [hasError, setHasError] = React.useState(false);
+  const { execute: executeSignIn, isLoading } = useFetch<SignInResponse>();
 
   const {
     register,
@@ -41,25 +48,25 @@ const LoginAdmin = (): JSX.Element => {
   });
 
   const onSubmit: SubmitHandler<AdminLogin> = async (data: AdminLogin) => {
-    const { email, password } = data;
+    setHasError(false);
     try {
-      const response: User = await loginAdmin(email, password);
-      setSuccess("Admin logged in successfully!");
-      if (response) {
-        const idToken: string = await response.getIdToken();
-        const response2: Response = await fetch("/api/auth/signin", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        });
+      await auth.setPersistence(browserSessionPersistence);
+      const user = await loginAdmin(data.email, data.password);
+      const idToken = await user.getIdToken();
 
-        if (response2.redirected) {
-          window.location.assign(response2.url);
-        }
+      const result = await executeSignIn("/api/auth/signin", {
+        method: "GET",
+        token: idToken,
+      });
+
+      if (result && result.data && result.data.url) {
+        window.location.assign(result.data.url);
+      } else {
+        setHasError(true);
       }
     } catch (error) {
-      setError("Error logging in admin. Please try again.");
+      console.error("Error logging in admin:", error);
+      setHasError(true);
     }
   };
 
@@ -76,28 +83,16 @@ const LoginAdmin = (): JSX.Element => {
 
   return (
     <>
-      {error && <div className="text-red-500">{error}</div>}
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col md:flex-row justify-center items-center h-[100vh] gap-8 p-8"
       >
         <Card className="w-full md:w-[400px]">
-          {success && (
+          {hasError && (
             <div
-              className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 my-4"
+              className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4"
               role="alert"
             >
-              <p className="font-bold">Ingreso exitoso</p>
-              <p>¡Has iniciado sesión correctamente como administrador!</p>
-              <p>Cargando...</p>
-            </div>
-          )}
-          {error && (
-            <div
-              className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 my-4"
-              role="alert"
-            >
-              <p className="font-bold">Error de ingreso</p>
               <p>
                 Error al iniciar sesión como administrador. Por favor, inténtalo
                 de nuevo.
@@ -105,16 +100,19 @@ const LoginAdmin = (): JSX.Element => {
             </div>
           )}
           <CardHeader>
-            <CardTitle>Login</CardTitle>
-            <CardDescription>Sign in to your admin account</CardDescription>
+            <CardTitle>Iniciar sesión</CardTitle>
+            <CardDescription>
+              Acceda a su cuenta de administrador
+            </CardDescription>
           </CardHeader>
+
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="login-email">Email</Label>
               <Input
                 id="login-email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="admin@example.com"
                 {...register("email")}
               />
             </div>
@@ -124,11 +122,28 @@ const LoginAdmin = (): JSX.Element => {
                 id="login-password"
                 type="password"
                 {...register("password")}
+                placeholder="********"
               />
             </div>
           </CardContent>
-          <CardFooter>
-            <Button className="w-full">Sign In</Button>
+          <CardFooter
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+              alignItems: "center",
+            }}
+          >
+            <Button type="submit" disabled={isLoading} className="w-full">
+              {isLoading ? <Spinner size="medium" /> : "Ingresar"}
+            </Button>
+            <p>
+              ¿No tienes una cuenta?{""}
+              <a href="/admin/register" className="text-blue-600">
+                {" "}
+                Registrate
+              </a>
+            </p>
           </CardFooter>
         </Card>
       </form>

@@ -18,7 +18,7 @@ export const adminSchema = z
       .string()
       .min(6, { message: "Secret Key must be at least 6 characters" })
       .max(30, { message: "Secret Key must be less than 30 characters" })
-      .refine((secretKey) => secretKey === import.meta.env.SECRET_KEY, {
+      .refine((secretKey) => secretKey === import.meta.env.PUBLIC_SECRET_KEY, {
         message: "Invalid secret key",
       }),
   })

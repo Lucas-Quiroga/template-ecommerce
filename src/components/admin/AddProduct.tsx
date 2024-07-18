@@ -21,6 +21,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DATA_TIENDA } from "@/constants/const";
+import app from "@/firebase/client";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default function AddProduct() {
   const [error, setError] = React.useState<string | null>(null);
@@ -51,6 +53,18 @@ export default function AddProduct() {
   const onSubmit: SubmitHandler<Product> = async (data) => {
     data = changedNull(data);
     try {
+      const auth = getAuth(app);
+      const user = auth.currentUser;
+      if (!user) {
+        return;
+      }
+      // Verificar y actualizar el token antes de subir
+      try {
+        await user.getIdToken(true); // Fuerza la actualización del token
+      } catch (error) {
+        return;
+      }
+
       let imageUrl = "";
       if (file) {
         imageUrl = await uploadImage(file);
@@ -75,18 +89,23 @@ export default function AddProduct() {
       });
       setFile(null);
     } catch (error) {
-      setError("Error adding product. Please try again.");
+      console.error("Error completo:", error);
+      if (error instanceof Error) {
+        setError(`Error adding product: ${error.message}`);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
   };
 
   //funcion que muestra mensaje de error o exito al enviar el formulario pero que dure 2 segundos
 
-  React.useEffect(() => {
-    const suscription = watch((value) => {
-      console.log(value);
-    });
-    return () => suscription.unsubscribe();
-  }, [watch]);
+  // React.useEffect(() => {
+  //   const suscription = watch((value) => {
+  //     console.log(value);
+  //   });
+  //   return () => suscription.unsubscribe();
+  // }, [watch]);
 
   return (
     <section className="flex flex-col gap-6 p-4 md:p-6 justify-center items-center h-[100vh]">

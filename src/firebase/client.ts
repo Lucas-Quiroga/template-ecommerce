@@ -25,6 +25,7 @@ if (!firebase.apps.length) {
 const analytics = getAnalytics(app);
 
 export const storage: FirebaseStorage = getStorage(app);
+
 const uuid: `${string}-${string}-${string}-${string}-${string}` =
   crypto.randomUUID();
 
@@ -34,10 +35,41 @@ const uuid: `${string}-${string}-${string}-${string}-${string}` =
  * @returns {Promise <String>} The download URL of the uploaded image.
  */
 export async function uploadImage(file: File): Promise<string> {
-  const storageRef: StorageReference = ref(storage, `products/${uuid}`);
-  await uploadBytes(storageRef, file);
-  const url: string = await getDownloadURL(storageRef);
-  return url;
-}
+  try {
+    const storageRef = ref(storage, crypto.randomUUID());
 
+    const snapshot = await uploadBytes(storageRef, file);
+
+    const url = await getDownloadURL(storageRef);
+    return url;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Stack trace:", error.stack);
+
+      // Verificar si el error es de Firebase y tiene un código
+      if ("code" in error) {
+        console.error("Código de error:", (error as { code: string }).code);
+      }
+    }
+
+    // Puedes personalizar el mensaje de error según el tipo de error
+    if (error instanceof Error && "code" in error) {
+      const firebaseError = error as { code: string };
+      switch (firebaseError.code) {
+        case "storage/unauthorized":
+          throw new Error("No tienes permiso para subir este archivo.");
+        case "storage/canceled":
+          throw new Error("La subida del archivo fue cancelada.");
+        case "storage/unknown":
+          throw new Error("Ocurrió un error desconocido durante la subida.");
+        default:
+          throw new Error(`Error al subir el archivo: ${error.message}`);
+      }
+    } else {
+      throw new Error(
+        "Ocurrió un error inesperado durante la subida del archivo."
+      );
+    }
+  }
+}
 export default app;

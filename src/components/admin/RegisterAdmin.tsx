@@ -76,16 +76,18 @@ const RegisterAdmin: React.FC = () => {
       >
         <Card className="w-full md:w-[400px]">
           <CardHeader>
-            <CardTitle>Register</CardTitle>
-            <CardDescription>Create a new admin account</CardDescription>
+            <CardTitle>Registro</CardTitle>
+            <CardDescription>
+              Crear una nueva cuenta de administrador
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">Nombre</Label>
               <Input
                 id="name"
                 type="text"
-                placeholder="manuel"
+                placeholder="Admin"
                 {...register("name")}
               />
               {errors.name && (
@@ -97,7 +99,7 @@ const RegisterAdmin: React.FC = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="admin@example.com"
                 {...register("email")}
               />
               {errors.email && (
@@ -105,18 +107,24 @@ const RegisterAdmin: React.FC = () => {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" {...register("password")} />
+              <Label htmlFor="password">Contraseña</Label>
+              <Input
+                id="password"
+                type="password"
+                {...register("password")}
+                placeholder="********"
+              />
               {errors.password && (
                 <span className="text-red-500">{errors.password.message}</span>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm Password</Label>
+              <Label htmlFor="confirm-password">Confirmar contraseña</Label>
               <Input
                 id="repeatPassword"
                 type="password"
                 {...register("repeatPassword")}
+                placeholder="********"
               />
               {errors.repeatPassword && (
                 <span className="text-red-500">
@@ -125,8 +133,13 @@ const RegisterAdmin: React.FC = () => {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="secretKey">Secret Key</Label>
-              <Input id="secret-key" type="text" {...register("secretKey")} />
+              <Label htmlFor="secretKey">Clave secreta</Label>
+              <Input
+                id="secret-key"
+                type="password"
+                {...register("secretKey")}
+                placeholder="********"
+              />
               {errors.secretKey && (
                 <span className="text-red-500">{errors.secretKey.message}</span>
               )}
@@ -141,10 +154,13 @@ const RegisterAdmin: React.FC = () => {
             }}
           >
             <Button className="w-full" type="submit">
-              Register
+              Registrar administrador
             </Button>
             <p>
-              ¿Ya tienes una cuenta? <a href="/admin/signin">Iniciar sesión</a>
+              ¿Ya tienes una cuenta?{" "}
+              <a href="/admin/signin" className="text-blue-600">
+                Iniciar sesión
+              </a>
             </p>
           </CardFooter>
         </Card>
