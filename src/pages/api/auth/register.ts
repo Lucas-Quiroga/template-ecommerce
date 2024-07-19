@@ -24,5 +24,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   } catch (error: any) {
     return new Response("Algo salió mal", { status: 400 });
   }
-  return redirect("/signin");
+  return new Response(JSON.stringify({ url: "/admin/signin" }), {
+    status: 200,
+  });
 };

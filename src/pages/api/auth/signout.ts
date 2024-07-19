@@ -4,5 +4,7 @@ export const GET: APIRoute = async ({ redirect, cookies }) => {
   cookies.delete("__session", {
     path: "/",
   });
-  return redirect("/admin");
+  return new Response(JSON.stringify({ url: "/admin" }), {
+    status: 200,
+  });
 };

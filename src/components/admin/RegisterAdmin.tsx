@@ -15,11 +15,10 @@ import type { SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { adminSchema } from "../../schema/adminSchema";
 import type { AdminRegister } from "../../types/types";
+import { useFetch } from "@/hooks/useFetch";
+import { Spinner } from "../ui/spinner";
 
 const RegisterAdmin: React.FC = () => {
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-
   const {
     register,
     formState: { errors },
@@ -30,14 +29,19 @@ const RegisterAdmin: React.FC = () => {
     resolver: zodResolver(adminSchema),
   });
 
-  const onSubmit: SubmitHandler<AdminRegister> = async (
-    data: AdminRegister,
-    event: React.BaseSyntheticEvent<object, any, any> | undefined
-  ) => {
-    event?.preventDefault();
+  const {
+    execute: executeRegister,
+    isLoading,
+    error,
+    isSuccess,
+    data,
+  } = useFetch<{ message: string }>();
 
+  const onSubmit: SubmitHandler<AdminRegister> = async (
+    data: AdminRegister
+  ) => {
     try {
-      const response: Response = await fetch("/api/auth/register", {
+      const result = await executeRegister("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -46,17 +50,17 @@ const RegisterAdmin: React.FC = () => {
           name: data.name,
           email: data.email,
           password: data.password,
-        }),
+        }).toString(),
       });
 
-      if (!response.ok) {
-        throw new Error("Error registering admin.");
+      if (isSuccess) {
+        reset();
       }
-
-      setSuccess("Admin registered successfully!");
-      reset();
+      if (result && result.data && result.data.url) {
+        window.location.assign(result.data.url);
+      }
     } catch (error) {
-      setError("Error registering admin. Please try again.");
+      console.error("Error registering admin:", error);
     }
   };
 
@@ -68,13 +72,19 @@ const RegisterAdmin: React.FC = () => {
 
   return (
     <>
-      {error && <div className="text-red-500">{error}</div>}
-      {success && <div className="text-green-500">{success}</div>}
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col md:flex-row justify-center items-center gap-8 p-8 h-[100vh]"
       >
         <Card className="w-full md:w-[400px]">
+          {isSuccess && data && (
+            <div
+              className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4"
+              role="alert"
+            >
+              <p>Registrado correctamente </p>
+            </div>
+          )}
           <CardHeader>
             <CardTitle>Registro</CardTitle>
             <CardDescription>
@@ -153,8 +163,8 @@ const RegisterAdmin: React.FC = () => {
               alignItems: "center",
             }}
           >
-            <Button className="w-full" type="submit">
-              Registrar administrador
+            <Button type="submit" disabled={isLoading} className="w-full">
+              {isLoading ? <Spinner size="medium" /> : "Registrar"}
             </Button>
             <p>
               ¿Ya tienes una cuenta?{" "}

@@ -1,49 +1,78 @@
 ---
 import { SlMagicWand } from "react-icons/sl";
 import { DATA_TIENDA } from "@/constants/const";
+import { Nav } from "@/components/Nav";
+import type { IconType } from "react-icons/lib";
+import { TfiPanel } from "react-icons/tfi";
+import { MdAdd } from "react-icons/md";
+import { GoHome } from "react-icons/go";
+
+const { session } = Astro.props;
+
+const routes = {
+  admin: [
+    { name: "Dashboard", href: "/admin/dashboard", icon: TfiPanel, select: 0 },
+    {
+      name: "Agregar producto",
+      href: "/admin/dashboard/add",
+      icon: MdAdd,
+      select: 1,
+    },
+
+    { name: "Inicio", href: "/", icon: GoHome, select: 2 },
+  ],
+  user: [
+    { name: "Inicio", href: "/", icon: GoHome, select: 0 },
+    { name: "Preguntas", href: "/preguntas", icon: GoHome, select: 1 },
+  ],
+};
 ---
 
 <aside
-  class="w-full lg:flex-none lg:w-64 p-6 bg-white dark:bg-gray-950 dark:border-r dark:border-white"
+  class="w-full lg:flex-none lg:w-64 p-6 bg-white dark:bg-gray-950 dark:border-r dark:border-white min-h-full flex flex-col"
 >
-  <div class="flex items-center space-x-2 mb-6">
-    <span class="text-lg font-semibold dark:text-white"
-      >{DATA_TIENDA.header.title}
-    </span>
-    <SlMagicWand className="dark:text-white" />
+  <div
+    class:list={[
+      "space-x-2 mb-6",
+      {
+        "flex flex-col items-center": session,
+        "flex items-center": !session,
+      },
+    ]}
+  >
+    <p class="text-lg font-bold dark:text-white">
+      {session ? "Panel de administración" : DATA_TIENDA.header.title}
+    </p>
+    <p class="text-gray-400 text-sm italic">
+      {session && `Bienvenido ${session.name}`}
+    </p>
+    {!session && <SlMagicWand className="dark:text-white" />}
   </div>
-  <nav class="space-y-10">
-    <a
-      class="flex items-center space-x-2 p-2 rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 dark:bg-gray-100 dark:text-black dark:hover:bg-gray-700 dark:hover:text-white"
-      href="/"
-    >
-      <svg
-        class="h-4 w-4"
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
-      <span>Inicio</span>
-    </a>
 
-    <div>
-      <p class="text-xs font-semibold text-gray-500 uppercase mb-2">Ayuda</p>
-
-      <a
-        class="block text-gray-700 hover:text-blue-500 mb-1 dark:text-gray-300 dark:hover:text-blue-400"
-        href="/preguntas"
-      >
-        Preguntas frecuentes
-      </a>
-    </div>
-  </nav>
+  {
+    session ? (
+      <Nav
+        client:load
+        links={routes.admin.map((route) => ({
+          href: route.href,
+          icon: route.icon,
+          name: route.name,
+          select: route.select,
+        }))}
+        localStorageKey="admin-aside"
+        isSession={session}
+      />
+    ) : (
+      <Nav
+        client:load
+        links={routes.user.map((route) => ({
+          href: route.href,
+          icon: route.icon,
+          name: route.name,
+          select: route.select,
+        }))}
+        localStorageKey="user-aside"
+      />
+    )
+  }
 </aside>

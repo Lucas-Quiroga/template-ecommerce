@@ -5,6 +5,7 @@ import NavbarAdmin from "@/components/admin/NavbarAdmin.astro";
 import { getAuthSession } from "@/services/getAuthSession";
 import ViewTransitions from "astro/components/ViewTransitions.astro";
 import type { DecodedIdToken } from "firebase-admin/auth";
+import Aside from "@/components/Aside.astro";
 
 const session: DecodedIdToken | null = await getAuthSession(Astro.cookies);
 ---
@@ -17,8 +18,13 @@ const session: DecodedIdToken | null = await getAuthSession(Astro.cookies);
     <title>{title}</title>
     <ViewTransitions />
   </head>
-  <body>
-    {session && <NavbarAdmin />}
-    <slot />
+
+  <body class="h-full">
+    <div class="flex flex-wrap min-h-screen bg-gray-100 dark:bg-gray-950">
+      {session && <Aside session={session} />}
+      <main class="flex-1">
+        <slot />
+      </main>
+    </div>
   </body>
 </html>

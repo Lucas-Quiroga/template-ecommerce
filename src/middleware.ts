@@ -14,6 +14,7 @@ const auth = getAuth(app);
 const protectedRoutes = ["/admin/dashboard/**"];
 const redirectRoute = "/admin";
 const signinRoute = "/admin/signin";
+const registerRoute = "/admin/register";
 
 // Función auxiliar para verificar la sesión del usuario
 async function verifySession(
@@ -26,6 +27,7 @@ async function verifySession(
     const decodedCookie: DecodedIdToken = await auth.verifySessionCookie(
       sessionCookie
     );
+
     const user: UserRecord = await auth.getUser(decodedCookie.uid);
     return user ? decodedCookie : null;
   } catch {
@@ -33,6 +35,7 @@ async function verifySession(
   }
 }
 
+// Middleware que se ejecuta antes de cada solicitud
 export const onRequest: MiddlewareHandler = defineMiddleware(
   async (
     {
@@ -49,15 +52,23 @@ export const onRequest: MiddlewareHandler = defineMiddleware(
     next: Function
   ) => {
     const { pathname } = url;
-    const isProtected: boolean = micromatch.isMatch(pathname, protectedRoutes);
+    const isProtected = micromatch.isMatch(pathname, protectedRoutes);
+    const isSigninOrRegister = micromatch.isMatch(pathname, [
+      signinRoute,
+      registerRoute,
+      redirectRoute,
+    ]);
 
-    let user = null;
+    let user = await verifySession(cookies);
+
     if (isProtected) {
-      user = await verifySession(cookies);
       if (!user) {
         return redirect(redirectRoute);
       }
+    } else if (user && isSigninOrRegister) {
+      return redirect("/admin/dashboard");
     }
+
     locals.emailUser = user?.email;
     return next();
   }
