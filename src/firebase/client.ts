@@ -14,6 +14,7 @@ import {
   MEASUREMENT_ID,
 } from "astro:env/client";
 
+// configuración de Firebase
 const firebaseConfig = {
   apiKey: API_KEY,
   authDomain: AUTH_DOMAIN,
