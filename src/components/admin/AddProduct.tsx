@@ -44,7 +44,8 @@ export default function AddProduct() {
     const newData: Product = { ...data };
     for (const key in newData) {
       if (newData[key as keyof Product] === undefined) {
-        (newData[key as keyof Product] as any) = null;
+        newData[key as keyof Product] as any;
+        null;
       }
     }
     return newData;

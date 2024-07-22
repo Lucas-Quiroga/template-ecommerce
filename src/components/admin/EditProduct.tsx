@@ -112,7 +112,15 @@ const EditProduct: React.FC<EditProductProps> = ({ product }) => {
           )}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="name">Imagen URL</Label>
+          <Label htmlFor="name">Imagen Actual</Label>
+          <img
+            src={product.image}
+            alt="product"
+            className="w-1/2 object-contain mx-auto"
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="name">Cambiar imagen</Label>
           <Input type="file" onChange={(e) => setFile(e.target.files![0])} />
 
           {file && (
