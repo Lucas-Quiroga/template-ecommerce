@@ -23,6 +23,7 @@ import {
 import { DATA_TIENDA } from "@/constants/const";
 import app from "@/firebase/client";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AddProduct() {
   const [error, setError] = React.useState<string | null>(null);
@@ -148,7 +149,7 @@ export default function AddProduct() {
           )}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="name">Imagen URL</Label>
+          <Label htmlFor="name">Imagen</Label>
           <Input type="file" onChange={(e) => setFile(e.target.files![0])} />
           {file && (
             <img
@@ -163,12 +164,15 @@ export default function AddProduct() {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="name">Descripcion</Label>
-          <Input
+          <Textarea
             id="description"
-            type="text"
-            placeholder="la descripcion"
+            placeholder="La descripcion"
             {...register("description")}
+            maxLength={210}
           />
+          <p className="text-sm text-muted-foreground">
+            Maximo 210 caracteres.
+          </p>
           {errors.description && (
             <span className="text-red-500">{errors?.description.message}</span>
           )}

@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DATA_TIENDA } from "@/constants/const";
+import { Textarea } from "@/components/ui/textarea";
 
 interface EditProductProps {
   product: Product;
@@ -136,12 +137,15 @@ const EditProduct: React.FC<EditProductProps> = ({ product }) => {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="name">Descripción</Label>
-          <Input
+          <Textarea
             id="description"
-            type="text"
             placeholder="Ingresa la descripción del producto"
             {...register("description")}
+            maxLength={210}
           />
+          <p className="text-sm text-muted-foreground">
+            Maximo 210 caracteres.
+          </p>
           {errors.description && (
             <span className="text-red-500">{errors.description.message}</span>
           )}

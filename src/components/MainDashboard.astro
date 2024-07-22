@@ -40,8 +40,8 @@ const table: Table = {
       <div class="flex justify-between m-4 w-full ml-auto">
         <div class="flex-1">
           <PaginationComponent
-            totalPages={Math.ceil(productsCount / limit) || 1}
-            currentPage={page}
+            totalPages={Math.ceil(productsCount / limit)}
+            currentPage={parseInt(page)}
             category={category}
           />
         </div>

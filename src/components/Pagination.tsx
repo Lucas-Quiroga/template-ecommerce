@@ -29,9 +29,9 @@ export function PaginationComponent({
 
   const renderPageNumbers = (): JSX.Element[] => {
     const pageNumbers = [];
-    const maxVisiblePages = 3;
-    let startPage: number = Math.max(1, currentPage - 1);
-    let endPage: number = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
     if (endPage - startPage + 1 < maxVisiblePages) {
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
@@ -65,11 +65,13 @@ export function PaginationComponent({
                 ? `?page=${currentPage - 1}&category=${category}`
                 : "#"
             }
-            onClick={(e) => handlePageClick(currentPage - 1, e)}
+            onClick={(e) =>
+              currentPage > 1 && handlePageClick(currentPage - 1, e)
+            }
           />
         </PaginationItem>
 
-        {currentPage > 2 && (
+        {currentPage > 3 && (
           <>
             <PaginationItem>
               <PaginationLink
@@ -79,15 +81,15 @@ export function PaginationComponent({
                 1
               </PaginationLink>
             </PaginationItem>
-            {currentPage > 3 && <PaginationEllipsis />}
+            <PaginationEllipsis />
           </>
         )}
 
         {renderPageNumbers()}
 
-        {currentPage < totalPages - 1 && (
+        {currentPage < totalPages - 2 && (
           <>
-            {currentPage < totalPages - 2 && <PaginationEllipsis />}
+            <PaginationEllipsis />
             <PaginationItem>
               <PaginationLink
                 href={`?page=${totalPages}&category=${category}`}
@@ -106,7 +108,9 @@ export function PaginationComponent({
                 ? `?page=${currentPage + 1}&category=${category}`
                 : "#"
             }
-            onClick={(e) => handlePageClick(currentPage + 1, e)}
+            onClick={(e) =>
+              currentPage < totalPages && handlePageClick(currentPage + 1, e)
+            }
           />
         </PaginationItem>
       </PaginationContent>
