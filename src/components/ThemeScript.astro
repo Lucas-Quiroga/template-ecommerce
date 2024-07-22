@@ -1,0 +1,39 @@
+---
+
+---
+
+<script is:inline>
+  function getThemePreference() {
+    if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
+      return localStorage.getItem("theme");
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+
+  function setTheme(theme) {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("theme", theme);
+    }
+  }
+
+  // Establecer el tema al cargar la página
+  setTheme(getThemePreference());
+
+  // Cambiar el tema cuando se cambia la preferencia del sistema
+  window.addEventListener("storage", () => {
+    setTheme(getThemePreference());
+  });
+
+  // Recargar el tema cuando se cambia de página en Astro (SPA) o se navega entre páginas (SSR)
+
+  document.addEventListener("astro:after-swap", () => {
+    setTheme(getThemePreference());
+  });
+</script>

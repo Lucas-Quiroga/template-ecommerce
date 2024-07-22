@@ -21,8 +21,8 @@ const { page, products, category, limit, productsCount } = Astro.props;
 
     <div class="flex-1">
       <PaginationComponent
-        totalPages={Math.ceil(productsCount / limit) || 1}
-        currentPage={page}
+        totalPages={Math.ceil(productsCount / limit)}
+        currentPage={parseInt(page)}
         category={category}
       />
     </div>

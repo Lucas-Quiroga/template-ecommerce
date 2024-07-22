@@ -13,13 +13,13 @@ import ViewTransitions from "astro/components/ViewTransitions.astro";
 import Aside from "@/components/Aside.astro";
 import { getAuthSession } from "@/services/getAuthSession";
 import type { DecodedIdToken } from "firebase-admin/auth";
+import ThemeScript from "@/components/ThemeScript.astro";
 
 const { title, description, image, canonicalURL, keywords } = Astro.props;
 
 const session: DecodedIdToken | null = await getAuthSession(Astro.cookies);
 ---
 
-<script is:inline src="/scripts/updateTheme.script.ts"></script>
 <html lang="en">
   <head>
     <SeoMeta
@@ -30,6 +30,7 @@ const session: DecodedIdToken | null = await getAuthSession(Astro.cookies);
       keywords={keywords}
     />
     <ViewTransitions />
+    <ThemeScript />
   </head>
   <body class="h-full">
     <div class="flex flex-wrap min-h-screen bg-gray-100 dark:bg-gray-950">

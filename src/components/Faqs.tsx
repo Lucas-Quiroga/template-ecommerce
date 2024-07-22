@@ -12,10 +12,10 @@ export default function Faqs(): JSX.Element {
       <div className="container px-4 md:px-6">
         <div className="mx-auto max-w-3xl space-y-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl dark:text-white">
               Preguntas Frecuentes
             </h2>
-            <p className="mt-4 text-muted-foreground md:text-xl/relaxed">
+            <p className="mt-4 text-muted-foreground md:text-xl/relaxed dark:text-white">
               Encuentra respuestas a las preguntas más comunes sobre nuestros
               servicios.
             </p>
@@ -23,11 +23,11 @@ export default function Faqs(): JSX.Element {
           <Accordion type="single" collapsible>
             {DATA_TIENDA.faqs.map((faq, index) => (
               <AccordionItem key={index} value={`question-${index}`}>
-                <AccordionTrigger className="text-xl  font-medium">
+                <AccordionTrigger className="text-xl  font-medium dark:text-white">
                   {faq.question}
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="space-y-4 py-4 text-muted-foreground text-lg">
+                  <div className="space-y-4 py-4 text-muted-foreground text-lg dark:text-white">
                     <p>{faq.answer}</p>
                   </div>
                 </AccordionContent>
