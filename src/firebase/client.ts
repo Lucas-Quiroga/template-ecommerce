@@ -4,15 +4,24 @@ import firebase from "firebase/compat/app";
 import type { FirebaseApp } from "firebase/app";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import type { FirebaseStorage, StorageReference } from "firebase/storage";
+import {
+  API_KEY,
+  AUTH_DOMAIN,
+  PROJECT_ID,
+  STORAGE_BUCKET,
+  MESSAGING_SENDER_ID,
+  APP_ID,
+  MEASUREMENT_ID,
+} from "astro:env/client";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.PUBLIC_API_KEY,
-  authDomain: import.meta.env.PUBLIC_AUTH_DOMAIN,
-  projectId: import.meta.env.PUBLIC_PROJECT_ID,
-  storageBucket: import.meta.env.PUBLIC_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.PUBLIC_MESSAGING_SENDER_ID,
-  appId: import.meta.env.PUBLIC_APP_ID,
-  measurementId: import.meta.env.PUBLIC_MEASUREMENT_ID,
+  apiKey: API_KEY,
+  authDomain: AUTH_DOMAIN,
+  projectId: PROJECT_ID,
+  storageBucket: STORAGE_BUCKET,
+  messagingSenderId: MESSAGING_SENDER_ID,
+  appId: APP_ID,
+  measurementId: MEASUREMENT_ID,
 };
 
 let app: FirebaseApp;
