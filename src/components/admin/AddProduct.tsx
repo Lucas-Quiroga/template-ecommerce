@@ -112,7 +112,9 @@ export default function AddProduct() {
   return (
     <section className="flex flex-col gap-6 p-4 md:p-6 justify-center items-center h-[100vh]">
       <div className="flex items-center justify-between ">
-        <h1 className="text-2xl font-bold">Agregar Nuevo Producto</h1>
+        <h1 className="text-2xl font-bold dark:text-white">
+          Agregar Nuevo Producto
+        </h1>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -137,20 +139,29 @@ export default function AddProduct() {
           </div>
         )}
         <div className="grid gap-2">
-          <Label htmlFor="name">Nombre</Label>
+          <Label htmlFor="name" className="dark:text-white">
+            Nombre
+          </Label>
           <Input
             id="name"
             type="text"
             placeholder="Ingresa el nombre del producto"
             {...register("name")}
+            className="dark:text-white"
           />
           {errors.name && (
             <span className="text-red-500">{errors?.name.message}</span>
           )}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="name">Imagen</Label>
-          <Input type="file" onChange={(e) => setFile(e.target.files![0])} />
+          <Label htmlFor="name" className="dark:text-white">
+            Imagen
+          </Label>
+          <Input
+            type="file"
+            onChange={(e) => setFile(e.target.files![0])}
+            className="dark:text-white"
+          />
           {file && (
             <img
               src={URL.createObjectURL(file)}
@@ -163,14 +174,17 @@ export default function AddProduct() {
           )}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="name">Descripcion</Label>
+          <Label htmlFor="name" className="dark:text-white">
+            Descripcion
+          </Label>
           <Textarea
             id="description"
             placeholder="La descripcion"
             {...register("description")}
             maxLength={210}
+            className="dark:text-white"
           />
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground dark:text-gray-50">
             Maximo 210 caracteres.
           </p>
           {errors.description && (
@@ -178,19 +192,24 @@ export default function AddProduct() {
           )}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="price">Precio</Label>
+          <Label htmlFor="price" className="dark:text-white">
+            Precio
+          </Label>
           <Input
             id="price"
             type="number"
             placeholder="Ingresa el precio del producto"
             {...register("price")}
+            className="dark:text-white"
           />
           {errors.price && (
             <span className="text-red-500">{errors?.price.message}</span>
           )}
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="avaliable">Disponible</Label>
+          <Label htmlFor="avaliable" className="dark:text-white">
+            Disponible
+          </Label>
           <Controller
             name="avaliable"
             control={control}
@@ -209,7 +228,7 @@ export default function AddProduct() {
           control={control}
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full dark:text-white">
                 <SelectValue placeholder="Selecciona la categoría" />
               </SelectTrigger>
               <SelectContent>

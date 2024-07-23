@@ -96,7 +96,7 @@ export const Nav: React.FC<NavProps> = ({
                 variant: "secondary",
                 size: "lg",
               }),
-              "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white cursor-pointer w-full"
+              "dark:bg-muted dark:text-black dark:hover:bg-muted dark:hover:text-white cursor-pointer w-full"
             )}
           >
             {isLoading ? <Spinner size={"medium"} /> : "Cerrar sesión"}

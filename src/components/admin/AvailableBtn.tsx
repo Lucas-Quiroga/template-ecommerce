@@ -45,7 +45,7 @@ const AvailableBtn: React.FC<AvailableBtnProps> = ({ product }) => {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button
-          className="m-auto w-16"
+          className="m-auto w-16 dark:text-white"
           style={{ backgroundColor: `${productavaliable ? "green" : "red"}` }}
         >
           {productavaliable ? "SI" : "NO"}
