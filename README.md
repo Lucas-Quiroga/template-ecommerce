@@ -44,24 +44,24 @@ Para que la plantilla funcione correctamente, sigue estos pasos:
 
 Visita [Firebase](https://firebase.google.com) para crear tu proyecto.
 
-2. **Crear archivo .env.development en el IDE**
+2. **Crear archivo .env en el IDE**
 
 Completa la siguiente información extraída del SDK del cliente de Firebase. Estas credenciales serán utilizadas por el lado del cliente de tu aplicación. Tambien podes encontrarlas en la consola de Firebase en Project settings > General. Desplázate hacia abajo hasta la sección Your apps y haz clic en el icono de Web app.
 
 ```text
-PUBLIC_API_KEY=
-PUBLIC_AUTH_DOMAIN=
-PUBLIC_PROJECT_ID=
-PUBLIC_STORAGE_BUCKET=
-PUBLIC_MESSAGING_SENDER_ID=
-PUBLIC_APP_ID=
-PUBLIC_MEASUREMENT_ID=
+API_KEY=
+AUTH_DOMAIN=
+PROJECT_ID=
+STORAGE_BUCKET=
+MESSAGING_SENDER_ID=
+APP_ID=
+MEASUREMENT_ID=
 ```
 
-Agrega una clave secreta para el administrador en el mismo archivo .env.development:
+Agrega una clave secreta para el administrador en el mismo archivo .env:
 
 ```text
-PUBLIC_SECRET_KEY="tu_clave_secreta"
+SECRET_KEY="tu_clave_secreta"
 ```
 
 3. **Inicializar firestore database**
@@ -80,7 +80,7 @@ service cloud.firestore {
 }
 ```
 
-4. **Crear archivo .env en el IDE**
+4. **En el archivo .env del IDE**
 
 Completa la siguiente información extraída de las credenciales del proyecto: Estas credenciales serán utilizadas por el lado del servidor de tu aplicación. Puedes generarlas en la consola de Firebase en Project settings > Service accounts > Firebase Admin SDK > Generate new private key.
 
@@ -188,7 +188,7 @@ La estructura de carpetas de este proyecto es la siguiente:
 │   ├── services/          # Servicios para manejar lógica de negocio y API
 │   ├── middleware/        # Middleware para manejar lógica entre capas
 │   └── cartStore/         # Estado y lógica del carrito de compras
-├── .env, .env.development # Archivos de variables de entorno
+├── .env                   # Archivos de variables de entorno
 ├── astro.config.mjs       # Configuración de Astro
 ├── package.json           # Dependencias y scripts del proyecto
 └── tsconfig.json          # Configuración de TypeScript
