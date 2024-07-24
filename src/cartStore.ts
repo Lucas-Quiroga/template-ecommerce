@@ -35,7 +35,7 @@ cartItems.subscribe((cart: Cart) => saveCartToLocalStorage(cart));
 
 /**
  * Agrega un producto al carrito
- * @param product - El producto a agregar
+ * @param product - El producto a añadir al carrito
  */
 export function addCartItem(product: Product): void {
   if (product.id === undefined) {
