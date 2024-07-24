@@ -95,7 +95,9 @@ const CardProduct: React.FC<CardProductProps> = ({ product }) => {
             {product.category && <Badge>{product.category}</Badge>}
 
             <span className="text-lg font-semibold ml-auto">
-              {formatter.format(product.price)}{" "}
+              {isNaN(Number(product.price))
+                ? "Precio no disponible"
+                : formatter.format(Number(product.price))}
               <span className="text-sm text-gray-600 italic">ARS</span>
             </span>
           </div>
