@@ -9,9 +9,14 @@ export const productSchema = z.object({
     .max(210, { message: "Description must be at most 210 characters" })
     .nullable()
     .optional(),
-  price: z.string().refine((val) => !Number.isNaN(parseInt(val, 10)), {
-    message: "Expected number, received a string",
-  }),
+  price: z
+    .union([
+      z.string().refine((val) => !Number.isNaN(Number(val)), {
+        message: "El precio debe ser un número válido",
+      }),
+      z.number().min(0, "El precio no puede ser negativo"),
+    ])
+    .transform((val) => Number(val)),
   category: z.string().nullable().optional(),
   avaliable: z.boolean().nullable().optional(),
 });

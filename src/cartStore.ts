@@ -45,6 +45,14 @@ export function addCartItem(product: Product): void {
 
   const { id, name, image, price } = product;
   const imageUrl: string = image ?? "";
+  const numericPrice: number =
+    typeof price === "string" ? parseFloat(price) : price;
+
+  if (isNaN(numericPrice)) {
+    console.error(`Precio inválido para el producto ${id}: ${price}`);
+    return;
+  }
+
   const existingEntry: CartItem = cartItems.get()[id];
   if (existingEntry) {
     cartItems.setKey(id, {
@@ -52,7 +60,13 @@ export function addCartItem(product: Product): void {
       quantity: existingEntry.quantity + 1,
     });
   } else {
-    cartItems.setKey(id, { id, name, image: imageUrl, price, quantity: 1 });
+    cartItems.setKey(id, {
+      id,
+      name,
+      image: imageUrl,
+      price: numericPrice,
+      quantity: 1,
+    });
   }
 }
 

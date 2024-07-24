@@ -10,7 +10,7 @@ const productsRef: FirebaseFirestore.CollectionReference<
 
 // Actualizar producto
 
-export const POST: APIRoute = async ({ params, redirect, request }) => {
+export const POST: APIRoute = async ({ params, request }) => {
   const formData: FormData = await request.formData();
   const name: string = formData.get("name")?.toString() || "";
   const image: string = formData.get("image")?.toString() || "";
@@ -20,9 +20,13 @@ export const POST: APIRoute = async ({ params, redirect, request }) => {
   const avaliable: boolean = formData.get("avaliable") === "on";
 
   if (!params.id) {
-    return new Response("No se puede encontrar el producto", {
-      status: 404,
-    });
+    return new Response(
+      JSON.stringify({ error: "No se puede encontrar el producto" }),
+      {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 
   try {
@@ -35,10 +39,21 @@ export const POST: APIRoute = async ({ params, redirect, request }) => {
       avaliable,
     });
 
-    return redirect("/admin/dashboard");
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: "Producto actualizado exitosamente",
+        redirectUrl: "/admin/dashboard",
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
-    return new Response("Algo salió mal", {
+    return new Response(JSON.stringify({ error: "Algo salió mal" }), {
       status: 500,
+      headers: { "Content-Type": "application/json" },
     });
   }
 };

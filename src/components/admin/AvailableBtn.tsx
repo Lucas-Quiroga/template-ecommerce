@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,42 +20,47 @@ interface AvailableBtnProps {
 }
 
 const AvailableBtn: React.FC<AvailableBtnProps> = ({ product }) => {
-  const [productavaliable, setProductAvaliable] = React.useState<
-    boolean | undefined
-  >(product.avaliable);
+  const [productAvailable, setProductAvailable] = useState<boolean>(
+    product.avaliable ?? false
+  );
 
-  const handleAvailable = async (): Promise<void> => {
+  const handleAvailable = useCallback(async (): Promise<void> => {
     try {
-      const response: Response = await updateProduct(product.id!, {
+      const response = await updateProduct(product.id!, {
         ...product,
-        avaliable: !productavaliable,
+        avaliable: !productAvailable,
       });
 
       if (!response.ok) {
         throw new Error("Error updating product.");
       }
 
-      setProductAvaliable(!productavaliable);
+      setProductAvailable(!productAvailable);
     } catch (error) {
       console.error("Error updating product", error);
+      // Aquí puedes agregar una notificación de error al usuario si lo deseas
     }
-  };
+  }, [product, productAvailable]);
+
+  const buttonStyle = useMemo(
+    () => ({
+      backgroundColor: productAvailable ? "green" : "red",
+    }),
+    [productAvailable]
+  );
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button
-          className="m-auto w-16 dark:text-white"
-          style={{ backgroundColor: `${productavaliable ? "green" : "red"}` }}
-        >
-          {productavaliable ? "SI" : "NO"}
+        <Button className="m-auto w-16 dark:text-white" style={buttonStyle}>
+          {productAvailable ? "SI" : "NO"}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Cambiar la disponibilidad?</AlertDialogTitle>
+          <AlertDialogTitle>¿Cambiar la disponibilidad?</AlertDialogTitle>
           <AlertDialogDescription>
-            Está acción cambiará la disponibilidad del producto. ¿Estás seguro
+            Esta acción cambiará la disponibilidad del producto. ¿Estás seguro
             de continuar?
           </AlertDialogDescription>
         </AlertDialogHeader>

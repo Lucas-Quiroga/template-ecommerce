@@ -1,11 +1,9 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import type { Product } from "@/types/types";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { productSchema } from "@/schema/productSchema";
-import { updateProduct } from "@/services/updateProduct";
-import type { SubmitHandler } from "react-hook-form";
 import { uploadImage } from "@/firebase/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -22,15 +20,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DATA_TIENDA } from "@/constants/const";
 import { Textarea } from "@/components/ui/textarea";
+import { useFetch } from "@/hooks/useFetch";
+import { Spinner } from "@/components/ui/spinner";
 
 interface EditProductProps {
   product: Product;
 }
 
 const EditProduct: React.FC<EditProductProps> = ({ product }) => {
-  const [error, setError] = React.useState<string | null>(null);
-  const [success, setSuccess] = React.useState<string | null>(null);
-  const [file, setFile] = React.useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const { execute, isLoading } = useFetch<Product>();
 
   const {
     register,
@@ -44,42 +45,84 @@ const EditProduct: React.FC<EditProductProps> = ({ product }) => {
   });
 
   useEffect(() => {
-    // Set default values after Astro has rendered in the client
-    setValue("name", product.name);
-    setValue("description", product.description);
-    setValue("image", product.image);
-    setValue("price", product.price);
-    setValue("avaliable", product.avaliable);
-    setValue("category", product.category);
+    Object.entries(product).forEach(([key, value]) => {
+      setValue(key as keyof Product, value);
+    });
   }, [product, setValue]);
 
-  const onSubmit: SubmitHandler<Product> = async (data: Product) => {
-    try {
-      let imageUrl: string = "";
-      if (file) {
-        imageUrl = await uploadImage(file);
-        data.image = imageUrl;
-      }
+  const onSubmit = useCallback(
+    async (data: Product) => {
+      try {
+        if (file) {
+          data.image = await uploadImage(file);
+        }
 
-      const response: Response = await updateProduct(product.id!, data);
-      if (!response.ok) {
-        throw new Error("Error updating product.");
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+          if (key === "avaliable") {
+            formData.append(key, value ? "on" : "off");
+          } else if (value !== undefined && value !== null) {
+            formData.append(key, value.toString());
+          }
+        });
+
+        const result = await execute(`/api/products/${product.id}`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (result?.data.error) {
+          throw new Error(
+            result.data.error.message || "Error updating product"
+          );
+        }
+
+        if (result?.data) {
+          setSuccess(result.data.message);
+          result.data.redirectUrl &&
+            window.location.replace(result.data.redirectUrl);
+        }
+      } catch (error) {
+        console.error(error);
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Error al actualizar el producto"
+        );
       }
-      setSuccess("Producto actualizado exitoso");
-      response.redirected && window.location.replace(response.url);
-    } catch (error) {
-      console.error(error);
-      setError("Error al actualizar el producto");
-    }
-  };
+    },
+    [execute, file, product.id]
+  );
+
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      e.target.files && setFile(e.target.files[0]);
+    },
+    []
+  );
+
+  const renderField = useCallback(
+    (label: string, id: keyof Product, component: React.ReactNode) => (
+      <div className="grid gap-2">
+        <Label htmlFor={id} className="dark:text-white">
+          {label}
+        </Label>
+        {component}
+        {errors[id] && (
+          <span className="text-red-500">{errors[id]?.message}</span>
+        )}
+      </div>
+    ),
+    [errors]
+  );
+
+  const categories = useMemo(() => DATA_TIENDA.categories, []);
 
   return (
     <section className="flex flex-col gap-6 p-4 md:p-6 justify-center items-center h-[100vh]">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold dark:text-white">
-          Actualizar Producto
-        </h1>
-      </div>
+      <h1 className="text-2xl font-bold dark:text-white">
+        Actualizar Producto
+      </h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col justify-center max-w-md m-0 p-0 gap-4"
@@ -89,8 +132,8 @@ const EditProduct: React.FC<EditProductProps> = ({ product }) => {
             className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 my-4"
             role="alert"
           >
-            <p className="font-bold">Producto actualizado exitoso</p>
-            <p>¡El producto se actualizó correctamente!</p>
+            <p className="font-bold">Producto actualizado exitosamente</p>
+            <p>{success}</p>
           </div>
         )}
         {error && (
@@ -102,10 +145,9 @@ const EditProduct: React.FC<EditProductProps> = ({ product }) => {
             <p>{error}</p>
           </div>
         )}
-        <div className="grid gap-2">
-          <Label htmlFor="name" className="dark:text-white">
-            Nombre
-          </Label>
+        {renderField(
+          "Nombre",
+          "name",
           <Input
             id="name"
             type="text"
@@ -113,45 +155,35 @@ const EditProduct: React.FC<EditProductProps> = ({ product }) => {
             {...register("name")}
             className="dark:text-white"
           />
-          {errors.name && (
-            <span className="text-red-500">{errors.name.message}</span>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="name" className="dark:text-white">
-            Imagen Actual
-          </Label>
+        )}
+        {renderField(
+          "Imagen Actual",
+          "image",
           <img
             src={product.image}
             alt="product"
             className="w-1/2 object-contain mx-auto dark:text-white"
           />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="name" className="dark:text-white">
-            Cambiar imagen
-          </Label>
+        )}
+        {renderField(
+          "Cambiar imagen",
+          "image",
           <Input
             type="file"
-            onChange={(e) => setFile(e.target.files![0])}
+            onChange={handleFileChange}
             className="dark:text-white"
           />
-
-          {file && (
-            <img
-              src={URL.createObjectURL(file)}
-              alt="product"
-              className="w-1/2 object-contain mx-auto dark:text-white"
-            />
-          )}
-          {errors.image && (
-            <span className="text-red-500">{errors.image.message}</span>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="name" className="dark:text-white">
-            Descripción
-          </Label>
+        )}
+        {file && (
+          <img
+            src={URL.createObjectURL(file)}
+            alt="product"
+            className="w-1/2 object-contain mx-auto dark:text-white"
+          />
+        )}
+        {renderField(
+          "Descripción",
+          "description",
           <Textarea
             id="description"
             placeholder="Ingresa la descripción del producto"
@@ -159,32 +191,21 @@ const EditProduct: React.FC<EditProductProps> = ({ product }) => {
             maxLength={210}
             className="dark:text-white"
           />
-          <p className="text-sm text-muted-foreground dark:text-gray-50">
-            Maximo 210 caracteres.
-          </p>
-          {errors.description && (
-            <span className="text-red-500">{errors.description.message}</span>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="price" className="dark:text-white">
-            Precio
-          </Label>
+        )}
+        {renderField(
+          "Precio",
+          "price",
           <Input
             id="price"
-            type="price"
+            type="number"
             placeholder="Ingresa el precio del producto"
             {...register("price")}
             className="dark:text-white"
           />
-          {errors.price && (
-            <span className="text-red-500">{errors.price.message}</span>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="avaliable" className="dark:text-white">
-            Disponible
-          </Label>
+        )}
+        {renderField(
+          "Disponible",
+          "avaliable",
           <Controller
             name="avaliable"
             control={control}
@@ -197,35 +218,36 @@ const EditProduct: React.FC<EditProductProps> = ({ product }) => {
               />
             )}
           />
-        </div>
-
-        <Controller
-          name="category"
-          control={control}
-          defaultValue={product.category}
-          render={({ field }) => (
-            <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className="w-full dark:text-white">
-                <SelectValue placeholder="Selecciona la categoría" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Categorías</SelectLabel>
-                  {DATA_TIENDA.categories.map((category, index) => (
-                    <SelectItem key={index} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          )}
-        />
-        <div className="col-span-2 lg:col-span-1 flex items-end">
-          <Button type="submit" className="w-full">
-            Actualizar Producto
-          </Button>
-        </div>
+        )}
+        {renderField(
+          "Categoría",
+          "category",
+          <Controller
+            name="category"
+            control={control}
+            defaultValue={product.category}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-full dark:text-white">
+                  <SelectValue placeholder="Selecciona la categoría" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Categorías</SelectLabel>
+                    {categories.map((category, index) => (
+                      <SelectItem key={index} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        )}
+        <Button type="submit" disabled={isLoading} className="w-full">
+          {isLoading ? <Spinner size="medium" /> : "Actualizar Producto"}
+        </Button>
       </form>
     </section>
   );

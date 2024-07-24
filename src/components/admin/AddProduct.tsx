@@ -1,14 +1,12 @@
 "use client";
-import * as React from "react";
+import React, { useState, useCallback } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm, Controller } from "react-hook-form";
-import type { SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Product } from "@/types/types";
 import { productSchema } from "@/schema/productSchema";
-import { addProduct } from "@/services/addProduct";
 import { uploadImage } from "@/firebase/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -22,111 +20,121 @@ import {
 } from "@/components/ui/select";
 import { DATA_TIENDA } from "@/constants/const";
 import app from "@/firebase/client";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { Textarea } from "@/components/ui/textarea";
+import { useFetch } from "@/hooks/useFetch";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function AddProduct() {
-  const [error, setError] = React.useState<string | null>(null);
-  const [success, setSuccess] = React.useState<string | null>(null);
-  const [file, setFile] = React.useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const { execute, isLoading } = useFetch<Product>();
+
   const {
     register,
     formState: { errors },
     handleSubmit,
     reset,
-    watch,
     control,
   } = useForm<Product>({
     resolver: zodResolver(productSchema),
   });
 
-  //funcion para detectar si algun campo es undefined y cambiarlo a null
-  const changedNull = (data: Product): Product => {
-    const newData: Product = { ...data };
-    for (const key in newData) {
-      if (newData[key as keyof Product] === undefined) {
-        newData[key as keyof Product] as any;
-        null;
-      }
-    }
-    return newData;
-  };
+  const changedNull = useCallback((data: Product): Product => {
+    return Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [
+        key,
+        value === undefined ? null : value,
+      ])
+    ) as Product;
+  }, []);
 
-  const onSubmit: SubmitHandler<Product> = async (data) => {
-    data = changedNull(data);
-    try {
-      const auth = getAuth(app);
-      const user = auth.currentUser;
-      if (!user) {
-        return;
-      }
-      // Verificar y actualizar el token antes de subir
+  const onSubmit = useCallback(
+    async (data: Product) => {
+      data = changedNull(data);
       try {
-        await user.getIdToken(true); // Fuerza la actualización del token
+        const auth = getAuth(app);
+        const user = auth.currentUser;
+
+        if (!user) return;
+
+        await user.getIdToken(true);
+
+        let imageUrl = "";
+        if (file) {
+          imageUrl = await uploadImage(file);
+          data.image = imageUrl;
+        }
+
+        data.avaliable = !!data.avaliable;
+
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== null) {
+            formData.append(
+              key,
+              key === "avaliable" ? (value ? "on" : "off") : value.toString()
+            );
+          }
+        });
+
+        const response = await execute("/api/products", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response) {
+          setSuccess("Producto cargado exitosamente");
+          reset({
+            name: "",
+            image: "",
+            description: "",
+            price: 0,
+            category: "",
+            avaliable: false,
+          });
+          setFile(null);
+          setTimeout(() => setSuccess(null), 2000);
+        } else {
+          setError("Error al cargar el producto");
+          setTimeout(() => setError(null), 2000);
+        }
       } catch (error) {
-        return;
+        console.error("Error completo:", error);
+        setError(
+          error instanceof Error
+            ? `Error adding product: ${error.message}`
+            : "An unknown error occurred"
+        );
       }
+    },
+    [changedNull, execute, file, reset]
+  );
 
-      let imageUrl = "";
-      if (file) {
-        imageUrl = await uploadImage(file);
-        data.image = imageUrl;
-      }
-      // Convertir avaliable a booleano explícitamente
-      data.avaliable = !!data.avaliable;
-      const response = await addProduct(data);
-      if (!response.ok) {
-        throw new Error("Error adding product.");
-      }
-
-      setSuccess("Product added successfully!");
-
-      reset({
-        name: "",
-        image: "",
-        description: "",
-        price: 0,
-        category: "",
-        avaliable: false,
-      });
-      setFile(null);
-    } catch (error) {
-      console.error("Error completo:", error);
-      if (error instanceof Error) {
-        setError(`Error adding product: ${error.message}`);
-      } else {
-        setError("An unknown error occurred");
-      }
-    }
-  };
-
-  //funcion que muestra mensaje de error o exito al enviar el formulario pero que dure 2 segundos
-
-  // React.useEffect(() => {
-  //   const suscription = watch((value) => {
-  //     console.log(value);
-  //   });
-  //   return () => suscription.unsubscribe();
-  // }, [watch]);
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) setFile(e.target.files[0]);
+    },
+    []
+  );
 
   return (
     <section className="flex flex-col gap-6 p-4 md:p-6 justify-center items-center h-[100vh]">
-      <div className="flex items-center justify-between ">
-        <h1 className="text-2xl font-bold dark:text-white">
-          Agregar Nuevo Producto
-        </h1>
-      </div>
+      <h1 className="text-2xl font-bold dark:text-white">
+        Agregar Nuevo Producto
+      </h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col  ustify-center max-w-md m-0 p-0  gap-4 "
+        className="flex flex-col justify-center max-w-md m-0 p-0 gap-4"
       >
         {success && (
           <div
             className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 my-4"
             role="alert"
           >
-            <p className="font-bold">Producto cargado exitoso</p>
-            <p>¡El producto se cargo correctamente! </p>
+            <p className="font-bold">Producto cargado exitosamente</p>
+            <p>¡El producto se cargó correctamente!</p>
           </div>
         )}
         {error && (
@@ -135,94 +143,53 @@ export default function AddProduct() {
             role="alert"
           >
             <p className="font-bold">Error al cargar el producto</p>
-            <p> </p>
+            <p>{error}</p>
           </div>
         )}
-        <div className="grid gap-2">
-          <Label htmlFor="name" className="dark:text-white">
-            Nombre
-          </Label>
-          <Input
-            id="name"
-            type="text"
-            placeholder="Ingresa el nombre del producto"
-            {...register("name")}
-            className="dark:text-white"
+        <FormField
+          label="Nombre"
+          id="name"
+          type="text"
+          placeholder="Ingresa el nombre del producto"
+          register={register}
+          errors={errors}
+        />
+        <FormField
+          label="Imagen"
+          id="image"
+          type="file"
+          onChange={handleFileChange}
+        />
+        {file && (
+          <img
+            src={URL.createObjectURL(file)}
+            alt="product"
+            className="w-1/2 object-contain mx-auto"
           />
-          {errors.name && (
-            <span className="text-red-500">{errors?.name.message}</span>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="name" className="dark:text-white">
-            Imagen
-          </Label>
-          <Input
-            type="file"
-            onChange={(e) => setFile(e.target.files![0])}
-            className="dark:text-white"
-          />
-          {file && (
-            <img
-              src={URL.createObjectURL(file)}
-              alt="product"
-              className="w-1/2 object-contain mx-auto"
-            />
-          )}
-          {errors.image && (
-            <span className="text-red-500">{errors?.image.message}</span>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="name" className="dark:text-white">
-            Descripcion
-          </Label>
-          <Textarea
-            id="description"
-            placeholder="La descripcion"
-            {...register("description")}
-            maxLength={210}
-            className="dark:text-white"
-          />
-          <p className="text-sm text-muted-foreground dark:text-gray-50">
-            Maximo 210 caracteres.
-          </p>
-          {errors.description && (
-            <span className="text-red-500">{errors?.description.message}</span>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="price" className="dark:text-white">
-            Precio
-          </Label>
-          <Input
-            id="price"
-            type="number"
-            placeholder="Ingresa el precio del producto"
-            {...register("price")}
-            className="dark:text-white"
-          />
-          {errors.price && (
-            <span className="text-red-500">{errors?.price.message}</span>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="avaliable" className="dark:text-white">
-            Disponible
-          </Label>
-          <Controller
-            name="avaliable"
-            control={control}
-            render={({ field }) => (
-              <Checkbox
-                id="avaliable"
-                checked={field.value}
-                onCheckedChange={(checked) => field.onChange(checked)}
-              />
-            )}
-          />
-        </div>
-
+        )}
+        <FormField
+          label="Descripción"
+          id="description"
+          as={Textarea}
+          placeholder="La descripción"
+          register={register}
+          errors={errors}
+          maxLength={210}
+        />
+        <FormField
+          label="Precio"
+          id="price"
+          type="number"
+          placeholder="Ingresa el precio del producto"
+          register={register}
+          errors={errors}
+        />
+        <FormField
+          label="Disponible"
+          id="avaliable"
+          as={Checkbox}
+          control={control}
+        />
         <Controller
           name="category"
           control={control}
@@ -244,12 +211,73 @@ export default function AddProduct() {
             </Select>
           )}
         />
-        <div className="col-span-2 lg:col-span-1 flex items-end">
-          <Button type="submit" className="w-full">
-            Agregar Producto
-          </Button>
-        </div>
+        <Button type="submit" disabled={isLoading} className="w-full">
+          {isLoading ? <Spinner size="medium" /> : "Agregar Producto"}
+        </Button>
       </form>
     </section>
   );
 }
+
+interface FormFieldProps {
+  label: string;
+  id: string;
+  type?: string;
+  placeholder?: string;
+  register?: any;
+  errors?: any;
+  as?: React.ComponentType<any>;
+  maxLength?: number;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  control?: any;
+}
+
+const FormField: React.FC<FormFieldProps> = ({
+  label,
+  id,
+  type = "text",
+  placeholder,
+  register,
+  errors,
+  as: Component = Input,
+  maxLength,
+  onChange,
+  control,
+}) => (
+  <div className="grid gap-2">
+    <Label htmlFor={id} className="dark:text-white">
+      {label}
+    </Label>
+    {control && Component === Checkbox ? (
+      <Controller
+        name={id}
+        control={control}
+        render={({ field }) => (
+          <Checkbox
+            id={id}
+            checked={field.value}
+            onCheckedChange={field.onChange}
+          />
+        )}
+      />
+    ) : (
+      <Component
+        id={id}
+        type={type}
+        placeholder={placeholder}
+        {...(register ? register(id) : {})}
+        onChange={onChange}
+        maxLength={maxLength}
+        className="dark:text-white"
+      />
+    )}
+    {maxLength && (
+      <p className="text-sm text-muted-foreground dark:text-gray-50">
+        Máximo {maxLength} caracteres.
+      </p>
+    )}
+    {errors && errors[id] && (
+      <span className="text-red-500">{errors[id].message}</span>
+    )}
+  </div>
+);
