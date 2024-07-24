@@ -16,7 +16,7 @@ type Product = {
   name: string;
   image?: string;
   description?: string;
-  price: number;
+  price: string | number;
   quantity?: number;
   category?: string;
   avaliable?: boolean;

@@ -15,22 +15,14 @@ import { formatter } from "@/lib/utils";
 
 const { page, products, category, limit, productsCount } = Astro.props;
 
-interface Table {
-  headers: string[];
-  data: Product[];
-}
-
-const table: Table = {
-  headers: [
-    "Imagen",
-    "Nombre",
-    "Precio",
-    "Categoria",
-    "Disponible",
-    "Acciones",
-  ],
-  data: products,
-};
+const tableHeaders = [
+  "Imagen",
+  "Nombre",
+  "Precio",
+  "Categoria",
+  "Disponible",
+  "Acciones",
+];
 ---
 
 <div class="flex h-screen w-full flex-col">
@@ -52,7 +44,7 @@ const table: Table = {
           <TableHeader>
             <TableRow>
               {
-                table.headers.map((header: string) => (
+                tableHeaders.map((header) => (
                   <TableHead key={header} className="dark:text-white">
                     {header}
                   </TableHead>
@@ -62,7 +54,7 @@ const table: Table = {
           </TableHeader>
           <TableBody>
             {
-              table.data.map((product: Product) => (
+              products.map((product: Product) => (
                 <TableRow key={product.id}>
                   <TableCell>
                     <img
@@ -76,14 +68,15 @@ const table: Table = {
                   <TableCell className="font-medium dark:text-white">
                     {product.name}
                   </TableCell>
-
                   <TableCell className="hidden md:table-cell dark:text-white">
-                    {formatter.format(product.price)}
+                    {isNaN(Number(product.price))
+                      ? "Precio no disponible"
+                      : formatter.format(Number(product.price))}
                   </TableCell>
                   <TableCell className="hidden md:table-cell dark:text-white">
                     {product.category}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell ">
+                  <TableCell className="hidden md:table-cell">
                     <AvailableBtn client:load product={product} />
                   </TableCell>
 
@@ -115,6 +108,7 @@ const table: Table = {
                         class="border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:hover:bg-slate-800 dark:hover:text-slate-50 h-10 w-10 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-30 dark:text-white"
                         data-id={product.id}
                         id="delete-document"
+                        aria-label="Eliminar"
                       >
                         <svg
                           class="h-4 w-4"
@@ -151,7 +145,7 @@ const table: Table = {
 <script>
   async function deleteProduct(id: string) {
     if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
-      const response: Response = await fetch(`/api/products/${id}`, {
+      const response = await fetch(`/api/products/${id}`, {
         method: "DELETE",
       });
       if (response.redirected) {
@@ -160,14 +154,13 @@ const table: Table = {
     }
   }
 
-  // Delegación de eventos
-  document.addEventListener("click", function (event) {
+  document.addEventListener("click", (event) => {
     const target = event.target as HTMLElement;
     const deleteButton = target.closest("button[data-id]") as HTMLButtonElement;
 
     if (deleteButton) {
       event.preventDefault();
-      const id: string | null = deleteButton.getAttribute("data-id");
+      const id = deleteButton.getAttribute("data-id");
       if (id) {
         deleteProduct(id);
       }
