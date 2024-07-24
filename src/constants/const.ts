@@ -1,45 +1,43 @@
 import type { DataTienda } from "@/types/types";
 
 export const CATEGORY_SELECT: string[] = [
-  "Infusiones",
-  "Sahumerios",
-  "Accesorios",
-  "Joyería",
-  "Ambientadores",
-  "Decoración",
-  "Velas",
+  "perfumes",
+  "fragrances",
+  "furniture",
+  "beauty",
+  "groceries",
 ];
 
-export const LOCAL_STORAGE_KEY: string = "cart_curanderia";
+export const LOCAL_STORAGE_KEY: string = "cart";
 
 export const API_URL: string = "https://api.whatsapp.com/send";
-export const PHONE_NUMBER: string = "+5491127877943";
+export const PHONE_NUMBER: string = "";
 
 export const DATA_TIENDA: DataTienda = {
   header: {
-    title: "Curandería-Santería",
+    title: "Tienda",
   },
   categories: CATEGORY_SELECT,
   faqs: [
     {
-      question: "¿Cómo hago un pedido?",
+      question: "Lorem ipsum dolor sit amet?",
       answer:
-        "Podes hacer tu pedido a través de nuestra tienda online, seleccionando los productos que te interesan y agregándolos al carrito. Una vez que hayas seleccionado todos los productos que deseas, podes finalizar la compra y te enviaremos un mensaje de WhatsApp para coordinar el envío y el pago.",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
     {
-      question: "¿Cómo puedo pagar?",
+      question: "Lorem ipsum dolor sit amet?",
       answer:
-        "Aceptamos Mercado Pago, transferencia bancaria y efectivo. Una vez que hayas finalizado tu compra, te enviaremos un mensaje de WhatsApp con los detalles para que puedas realizar el pago.",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
     {
-      question: "¿Hacen envíos?",
+      question: "Lorem ipsum dolor sit amet?",
       answer:
-        "Realizamos envios dependiendo la zona, a coordinar luego con nostros en whatsapp.",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
     {
-      question: "¿Cuánto cuesta el envío?",
+      question: "Lorem ipsum dolor sit amet?",
       answer:
-        "El costo del envío depende de la zona de entrega y del peso de los productos. Una vez que hayas finalizado tu compra, te enviaremos un mensaje de WhatsApp con el costo del envío.",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
   ],
   contact: {
