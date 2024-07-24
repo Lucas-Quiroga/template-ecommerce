@@ -29,27 +29,79 @@ export function PaginationComponent({
 
   const renderPageNumbers = (): JSX.Element[] => {
     const pageNumbers = [];
-    const maxVisiblePages = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
+    if (totalPages <= 4) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              href={`?page=${i}&category=${category}`}
+              isActive={currentPage === i}
+              onClick={(e) => handlePageClick(i, e)}
+              className="dark:text-white"
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+    } else {
+      // Render first 3 pages, ellipsis, and last page if necessary
+      let startPage = Math.max(1, currentPage - 1);
+      let endPage = Math.min(totalPages, currentPage + 1);
 
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(
-        <PaginationItem key={i}>
-          <PaginationLink
-            href={`?page=${i}&category=${category}`}
-            isActive={currentPage === i}
-            onClick={(e) => handlePageClick(i, e)}
-            className="dark:text-white"
-          >
-            {i}
-          </PaginationLink>
-        </PaginationItem>
-      );
+      if (currentPage > 2) {
+        pageNumbers.push(
+          <PaginationItem key={1}>
+            <PaginationLink
+              href={`?page=1&category=${category}`}
+              isActive={currentPage === 1}
+              onClick={(e) => handlePageClick(1, e)}
+              className="dark:text-white"
+            >
+              1
+            </PaginationLink>
+          </PaginationItem>
+        );
+
+        if (currentPage > 3) {
+          pageNumbers.push(<PaginationEllipsis key="ellipsis1" />);
+        }
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              href={`?page=${i}&category=${category}`}
+              isActive={currentPage === i}
+              onClick={(e) => handlePageClick(i, e)}
+              className="dark:text-white"
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+
+      if (currentPage < totalPages - 1) {
+        if (currentPage < totalPages - 2) {
+          pageNumbers.push(<PaginationEllipsis key="ellipsis2" />);
+        }
+
+        pageNumbers.push(
+          <PaginationItem key={totalPages}>
+            <PaginationLink
+              href={`?page=${totalPages}&category=${category}`}
+              isActive={currentPage === totalPages}
+              onClick={(e) => handlePageClick(totalPages, e)}
+              className="dark:text-white"
+            >
+              {totalPages}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
     }
 
     return pageNumbers;
@@ -58,61 +110,74 @@ export function PaginationComponent({
   return (
     <Pagination>
       <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            href={
-              currentPage > 1
-                ? `?page=${currentPage - 1}&category=${category}`
-                : "#"
-            }
-            onClick={(e) =>
-              currentPage > 1 && handlePageClick(currentPage - 1, e)
-            }
-          />
-        </PaginationItem>
+        <div className="hidden lg:flex">
+          <PaginationItem>
+            <PaginationPrevious
+              href={
+                currentPage > 1
+                  ? `?page=${currentPage - 1}&category=${category}`
+                  : "#"
+              }
+              onClick={(e) =>
+                currentPage > 1 && handlePageClick(currentPage - 1, e)
+              }
+            />
+          </PaginationItem>
 
-        {currentPage > 3 && (
-          <>
-            <PaginationItem>
-              <PaginationLink
-                href={`?page=1&category=${category}`}
-                onClick={(e) => handlePageClick(1, e)}
-              >
-                1
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationEllipsis />
-          </>
-        )}
+          {renderPageNumbers()}
 
-        {renderPageNumbers()}
+          <PaginationItem>
+            <PaginationNext
+              href={
+                currentPage < totalPages
+                  ? `?page=${currentPage + 1}&category=${category}`
+                  : "#"
+              }
+              onClick={(e) =>
+                currentPage < totalPages && handlePageClick(currentPage + 1, e)
+              }
+            />
+          </PaginationItem>
+        </div>
 
-        {currentPage < totalPages - 2 && (
-          <>
-            <PaginationEllipsis />
-            <PaginationItem>
-              <PaginationLink
-                href={`?page=${totalPages}&category=${category}`}
-                onClick={(e) => handlePageClick(totalPages, e)}
-              >
-                {totalPages}
-              </PaginationLink>
-            </PaginationItem>
-          </>
-        )}
+        {/* Mostrar solo en dispositivos móviles */}
+        <div className="lg:hidden flex space-x-1">
+          <PaginationItem>
+            <PaginationPrevious
+              href={
+                currentPage > 1
+                  ? `?page=${currentPage - 1}&category=${category}`
+                  : "#"
+              }
+              onClick={(e) =>
+                currentPage > 1 && handlePageClick(currentPage - 1, e)
+              }
+              className="p-2"
+            />
+          </PaginationItem>
 
-        <PaginationItem>
-          <PaginationNext
-            href={
-              currentPage < totalPages
-                ? `?page=${currentPage + 1}&category=${category}`
-                : "#"
-            }
-            onClick={(e) =>
-              currentPage < totalPages && handlePageClick(currentPage + 1, e)
-            }
-          />
-        </PaginationItem>
+          <PaginationItem>
+            <PaginationLink
+              isActive={currentPage === currentPage}
+              className="dark:text-white"
+            >
+              {currentPage}
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext
+              href={
+                currentPage < totalPages
+                  ? `?page=${currentPage + 1}&category=${category}`
+                  : "#"
+              }
+              onClick={(e) =>
+                currentPage < totalPages && handlePageClick(currentPage + 1, e)
+              }
+              className="p-2"
+            />
+          </PaginationItem>
+        </div>
       </PaginationContent>
     </Pagination>
   );
