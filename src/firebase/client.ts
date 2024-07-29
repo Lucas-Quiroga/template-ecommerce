@@ -32,7 +32,7 @@ if (!firebase.apps.length) {
   app = firebase.app(); // if already initialized, use that one
 }
 
-const analytics = getAnalytics(app);
+export const analytics = getAnalytics(app);
 
 export const storage: FirebaseStorage = getStorage(app);
 
@@ -82,4 +82,5 @@ export async function uploadImage(file: File): Promise<string> {
     }
   }
 }
+
 export default app;

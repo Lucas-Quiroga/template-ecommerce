@@ -41,6 +41,7 @@ export default function AddProduct() {
     resolver: zodResolver(productSchema),
   });
 
+  // Cambia los valores undefined por null en un objeto
   const changedNull = useCallback((data: Product): Product => {
     return Object.fromEntries(
       Object.entries(data).map(([key, value]) => [

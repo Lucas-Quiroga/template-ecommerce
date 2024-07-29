@@ -71,7 +71,10 @@ export function useFetch<T, E = unknown>(
   }, []);
 
   const execute = useCallback(
-    (url: string = initialUrl || "", options?: FetchOptions) => {
+    async (
+      url: string,
+      options?: FetchOptions
+    ): Promise<{ data: T; response: Response } | undefined> => {
       return fetchData(url, options);
     },
     [fetchData, initialUrl]

@@ -19,6 +19,7 @@ export default defineConfig({
   output: "server",
   adapter: vercel(),
   experimental: {
+    serverIslands: true,
     env: {
       schema: {
         FIREBASE_PRIVATE_KEY_ID: envField.string({

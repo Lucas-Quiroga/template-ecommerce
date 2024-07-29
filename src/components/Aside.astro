@@ -6,20 +6,51 @@ import type { IconType } from "react-icons/lib";
 import { TfiPanel } from "react-icons/tfi";
 import { MdAdd } from "react-icons/md";
 import { GoHome } from "react-icons/go";
+import { SiSimpleanalytics } from "react-icons/si";
+import { IoSettingsOutline } from "react-icons/io5";
+import { FiBox } from "react-icons/fi";
 
 const { session } = Astro.props;
 
+const iconComponents = {
+  TfiPanel,
+  MdAdd,
+  GoHome,
+  SiSimpleanalytics,
+  IoSettingsOutline,
+  FiBox,
+};
+
+interface NavLink {
+  name: string;
+  href?: string;
+  icon: keyof typeof iconComponents;
+  select: number;
+}
+
 const routes = {
   admin: [
-    { name: "Dashboard", href: "/admin/dashboard", icon: TfiPanel, select: 0 },
+    { name: "Productos", href: "/admin/dashboard", icon: FiBox, select: 0 },
     {
-      name: "Agregar producto",
+      name: "Agregar",
       href: "/admin/dashboard/add",
       icon: MdAdd,
       select: 1,
     },
+    {
+      name: "Analytics",
+      href: "/admin/dashboard/analytics",
+      icon: SiSimpleanalytics,
+      select: 2,
+    },
+    {
+      name: "Configuración",
+      href: "/admin/dashboard/settings",
+      icon: IoSettingsOutline,
+      select: 3,
+    },
 
-    { name: "Inicio", href: "/", icon: GoHome, select: 2 },
+    { name: "Inicio", href: "/", icon: GoHome, select: 4 },
   ],
   user: [
     { name: "Inicio", href: "/", icon: GoHome, select: 0 },
@@ -29,7 +60,12 @@ const routes = {
 ---
 
 <aside
-  class="w-full xl:flex-none xl:w-64 p-6 bg-white dark:bg-gray-950 dark:border-r dark:border-white min-h-full flex flex-col"
+  class:list={[
+    "w-full xl:flex-none xl:w-64 p-6 bg-white dark:bg-gray-950 dark:border-r dark:border-white min-h-full flex flex-col",
+    {
+      "bg-gray-100 dark:bg-gray-950": session,
+    },
+  ]}
 >
   <div
     class:list={[
@@ -53,24 +89,28 @@ const routes = {
     session ? (
       <Nav
         client:load
-        links={routes.admin.map((route) => ({
-          href: route.href,
-          icon: route.icon,
-          name: route.name,
-          select: route.select,
-        }))}
+        links={
+          routes.admin.map((route) => ({
+            href: route.href,
+            icon: route.icon.name,
+            name: route.name,
+            select: route.select,
+          })) as NavLink[]
+        }
         localStorageKey="admin-aside"
         isSession={session}
       />
     ) : (
       <Nav
         client:load
-        links={routes.user.map((route) => ({
-          href: route.href,
-          icon: route.icon,
-          name: route.name,
-          select: route.select,
-        }))}
+        links={
+          routes.user.map((route) => ({
+            href: route.href,
+            icon: route.icon.name,
+            name: route.name,
+            select: route.select,
+          })) as NavLink[]
+        }
         localStorageKey="user-aside"
       />
     )

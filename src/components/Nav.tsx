@@ -6,11 +6,27 @@ import type { IconType } from "react-icons/lib";
 import { Button } from "@/components/ui/button";
 import { useFetch } from "@/hooks/useFetch";
 import { Spinner } from "./ui/spinner";
+import { TfiPanel } from "react-icons/tfi";
+import { MdAdd } from "react-icons/md";
+import { GoHome } from "react-icons/go";
+import { MdOutlineLogout } from "react-icons/md";
+import { SiSimpleanalytics } from "react-icons/si";
+import { IoSettingsOutline } from "react-icons/io5";
+import { FiBox } from "react-icons/fi";
+
+const iconComponents = {
+  TfiPanel,
+  MdAdd,
+  GoHome,
+  SiSimpleanalytics,
+  IoSettingsOutline,
+  FiBox,
+};
 
 interface NavLink {
   name: string;
   href?: string;
-  icon: IconType;
+  icon: keyof typeof iconComponents;
   select: number;
 }
 
@@ -65,14 +81,15 @@ export const Nav: React.FC<NavProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <nav className="flex flex-col flex-grow gap-y-2 overflow-auto px-2">
+    <div className="flex flex-col h-full ">
+      <nav className="flex flex-col flex-grow gap-y-2 overflow-auto px-2 ">
         {links.map((link) => (
           <a
             key={link.select}
             href={link.href}
             onClick={() => handleSelection(link.select)}
             className={cn(
+              "flex justify-between items-center w-full",
               buttonVariants({
                 variant: selected === link.select ? "default" : "secondary",
                 size: "lg",
@@ -81,8 +98,13 @@ export const Nav: React.FC<NavProps> = ({
                 "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white"
             )}
           >
-            {link.icon && <link.icon className="h-4 w-4" />}
-            {link.name}
+            <span className="flex items-center w-6 h-6 mr-2">
+              {link.icon &&
+                React.createElement(iconComponents[link.icon], {
+                  className: "w-full h-full",
+                })}
+            </span>
+            <span className="flex-grow text-left">{link.name}</span>
           </a>
         ))}
       </nav>
@@ -99,6 +121,8 @@ export const Nav: React.FC<NavProps> = ({
               "dark:bg-muted dark:text-black dark:hover:bg-muted dark:hover:text-white cursor-pointer w-full"
             )}
           >
+            <MdOutlineLogout size={24} />
+
             {isLoading ? <Spinner size={"medium"} /> : "Cerrar sesión"}
           </Button>
         </div>

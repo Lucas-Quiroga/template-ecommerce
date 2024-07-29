@@ -17,7 +17,7 @@ export async function getPaginatedProducts(
   searchParams: URLSearchParams,
   showAll: boolean = false
 ): Promise<PaginatedProductsResult> {
-  const limit = 8;
+  const limit = 10;
   const category: string = searchParams.get("category") || "";
   const requestedPage: number = Number(searchParams.get("page")) || 1;
 

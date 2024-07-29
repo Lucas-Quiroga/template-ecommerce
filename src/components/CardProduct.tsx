@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import type { Product } from "@/types/types";
 import {
@@ -25,6 +26,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { analytics } from "@/firebase/client";
+import { logEvent } from "firebase/analytics";
 
 type Cart = Record<string, CartItem>;
 
@@ -41,14 +44,26 @@ const CardProduct: React.FC<CardProductProps> = ({ product }) => {
     setQuantity(getQuantity(product.id!));
   }, [$cartItems, product.id]);
 
+  const logProductSelection = () => {
+    logEvent(analytics, "product_selected", {
+      item_id: product.id,
+      item_name: product.name,
+      item_category: product.category,
+      quantity,
+      price: product.price,
+    });
+  };
+
   const addProduct = (): void => {
     addCartItem(product);
     setQuantity(getQuantity(product.id!));
+    logProductSelection();
   };
 
   const increaseQuantity = (): void => {
     updateCartItemQuantity(product.id!, quantity + 1);
     setQuantity(quantity + 1);
+    logProductSelection();
   };
 
   const decreaseQuantity = (): void => {
@@ -89,7 +104,7 @@ const CardProduct: React.FC<CardProductProps> = ({ product }) => {
             onClick={() => setIsOpen(true)}
           />
         </CardHeader>
-        <CardContent className="p-4 flex-grow">
+        <CardContent className="p-3 flex-grow">
           {" "}
           <div className="flex justify-between items-center mb-2">
             {product.category && <Badge>{product.category}</Badge>}

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { SECRET_KEY } from "astro:env/client";
 
+// Admin schema de registro
 export const adminSchema = z
   .object({
     name: z.string().min(3, { message: "Name must be at least 3 characters" }),
@@ -28,6 +29,7 @@ export const adminSchema = z
     path: ["repeatPassword"],
   });
 
+// Admin schema de login
 export const loginAdminSchema = z.object({
   email: z.string().email({
     message: "Invalid email",
@@ -36,3 +38,38 @@ export const loginAdminSchema = z.object({
     message: "Password must be at least 6 characters",
   }),
 });
+
+// Admin schema de actualización
+export const updateAdminSchema = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(6, {
+        message: "Current Password must be at least 6 characters",
+      })
+      .nullable()
+      .optional(),
+    newPassword: z
+      .string()
+      .min(6, {
+        message: "New Password must be at least 6 characters",
+      })
+      .nullable()
+      .optional(),
+    repeatNewPassword: z
+      .string()
+      .min(6, {
+        message: "Repeat New Password must be at least 6 characters",
+      })
+      .nullable()
+      .optional(),
+    name: z
+      .string()
+      .min(3, { message: "Name must be at least 3 characters" })
+      .nullish()
+      .or(z.literal("")), //Esto permitirá que el campo sea una cadena vacía o una cadena con al menos 3 caracteres.
+    image: z.string().nullable().optional(),
+  })
+  .refine((data) => data.newPassword === data.repeatNewPassword, {
+    message: "New Passwords do not match",
+  });

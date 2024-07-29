@@ -37,12 +37,12 @@ const { page, products, category, limit, productsCount } = Astro.props;
   <div class="flex-grow">
     {products.length === 0 && <ProductNotFound />}
     <div
-      class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
+      class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-4"
     >
       {
         products !== null
           ? products.map((product: Product) => (
-              <CardProduct client:load product={product} />
+              <CardProduct client:only="react" product={product} />
             ))
           : Array.from({ length: 8 }, (_, index) => (
               <SkeletonCard key={index} />

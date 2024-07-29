@@ -1,3 +1,6 @@
+import type { updateAdminSchema } from "@/schema/adminSchema";
+import { z } from "zod";
+
 type AdminRegister = {
   name: string;
   email: string;
@@ -10,6 +13,8 @@ type AdminLogin = {
   email: string;
   password: string;
 };
+
+type AdminUpdate = z.infer<typeof updateAdminSchema>;
 
 type Product = {
   id?: string;
@@ -56,6 +61,7 @@ type DataTienda = {
 export type {
   AdminRegister,
   AdminLogin,
+  AdminUpdate,
   Product,
   CartItem,
   PaginatedProductsResult,
