@@ -66,19 +66,17 @@ const EditProduct: React.FC<EditProductProps> = ({ product }) => {
           }
         });
 
-        const result = await execute(`/api/products/${product.id}`, {
+        const result = (await execute(`/api/products/${product.id}`, {
           method: "POST",
           body: formData,
-        });
-
-        if (result?.data.error) {
-          throw new Error(
-            result.data.error.message || "Error updating product"
-          );
+        })) as { data?: Product & { redirectUrl?: string } };
+        console.log(result);
+        if (!result?.data) {
+          setError("Error al actualizar el producto");
         }
 
         if (result?.data) {
-          setSuccess(result.data.message);
+          setSuccess("Producto actualizado exitosamente");
           result.data.redirectUrl &&
             window.location.replace(result.data.redirectUrl);
         }

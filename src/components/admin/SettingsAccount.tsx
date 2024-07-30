@@ -22,7 +22,7 @@ import app from "@/firebase/client";
 import { Spinner } from "../ui/spinner";
 
 const SettingsAccount = () => {
-  const { execute, isLoading, isError, error } = useFetch<AdminUpdate>();
+  const { execute, isLoading } = useFetch<AdminUpdate>();
   const [success, setSuccess] = React.useState<string | null>(null);
   const auth = getAuth(app);
 

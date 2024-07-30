@@ -18,6 +18,11 @@ import type { AdminRegister } from "../../types/types";
 import { useFetch } from "@/hooks/useFetch";
 import { Spinner } from "../ui/spinner";
 
+interface RegisterResponse {
+  message: string;
+  url?: string;
+}
+
 const RegisterAdmin: React.FC = () => {
   const {
     register,
@@ -35,7 +40,7 @@ const RegisterAdmin: React.FC = () => {
     error,
     isSuccess,
     data,
-  } = useFetch<{ message: string }>();
+  } = useFetch<RegisterResponse>();
 
   const onSubmit: SubmitHandler<AdminRegister> = async (
     data: AdminRegister
