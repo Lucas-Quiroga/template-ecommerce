@@ -55,14 +55,18 @@ export const updateAdminSchema = z
         message: "New Password must be at least 6 characters",
       })
       .nullable()
-      .optional(),
+      .optional()
+      .nullish()
+      .or(z.literal("")),
     repeatNewPassword: z
       .string()
       .min(6, {
         message: "Repeat New Password must be at least 6 characters",
       })
       .nullable()
-      .optional(),
+      .optional()
+      .nullish()
+      .or(z.literal("")),
     name: z
       .string()
       .min(3, { message: "Name must be at least 3 characters" })

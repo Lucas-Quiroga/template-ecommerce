@@ -140,7 +140,10 @@ const SettingsAccount = () => {
                   {...register("name")}
                 />
               </div>
-              <div>
+              {/**
+               * @todo: Ocultado hasta que se implemente la funcionalidad
+               */}
+              <div className="hidden">
                 <Label htmlFor="profile-image">Agregar imagen</Label>
                 <Button variant="outline" size="icon" className="h-10 w-10">
                   <MdOutlineFileUpload className="h-5 w-5" />
