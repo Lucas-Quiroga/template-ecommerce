@@ -55,7 +55,7 @@ PROJECT_ID=
 STORAGE_BUCKET=
 MESSAGING_SENDER_ID=
 APP_ID=
-MEASUREMENT_ID=
+MEASUREMENT_ID= // Aparecerá si inicializaste con Google Analytics
 ```
 
 Agrega una clave secreta para el administrador en el mismo archivo .env:
@@ -132,6 +132,8 @@ export const DATA_TIENDA = {
 En la consola de Firebase, inicializa la autenticación en "Authentication". Agrega un proveedor de correo electrónico y contraseña. Luego, visita:
 
 ```text
+npm run dev
+
 http://localhost:4321/admin
 ```
 para registrar y loguear al administrador.
