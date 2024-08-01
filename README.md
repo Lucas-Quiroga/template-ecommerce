@@ -1,10 +1,10 @@
-# Plantilla E-commerce con Astro
+# Plantilla Tienda con Astro
 
-Esta plantilla de e-commerce está construida con Astro, utilizando React para los componentes y Tailwind CSS junto con SHADCN para el estilo. Es ideal para empezar a construir tu tienda en línea de manera rápida y sencilla.
+Esta plantilla está construida con Astro, utilizando React para los componentes y Tailwind CSS junto con SHADCN para el estilo. Es ideal para empezar a construir tu tienda en línea de manera rápida y sencilla.
 
 Utiliza Firebase para la base de datos, por lo que es necesario configurarla según tus necesidades. Te proporcionamos una base preconfigurada que puedes ajustar según tus productos.
 
-## Imagen previa 👁
+## Imagen previa
 
 ![app](https://res.cloudinary.com/dncmrwppr/image/upload/v1721185820/131shots_so_cmzoqs.png)
 
